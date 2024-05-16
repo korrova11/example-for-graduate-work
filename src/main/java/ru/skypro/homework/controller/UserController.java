@@ -28,10 +28,10 @@ public class UserController {
             summary = "Обновление пароля",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Существующий пароль, новый пароль",
-                    content = @Content (
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(implementation = ChangePassword.class)
-            )
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = ChangePassword.class)
+                    )
             ),
             responses = {@ApiResponse(
                     responseCode = "200",
@@ -65,15 +65,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
     @Operation(
             summary = "Получение информации об авторизованном пользователе",
             responses = {@ApiResponse(
                     responseCode = "200",
-                    description = "Пароль обновлен",
+                    description = "Найденный пользователь",
 
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ChangePassword.class)
+                            schema = @Schema(implementation = UserDto.class)
                     )
             ),
                     @ApiResponse(
@@ -81,18 +82,12 @@ public class UserController {
                             description = "Пользователен не авторизован"
 
 
-                    ),
-                    @ApiResponse(
-                            responseCode = "403",
-                            description = "Пароль не соответствует шаблону"
-
-
                     )},
             tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserDto(){
-        if (1==1) {
+    public ResponseEntity<UserDto> getUserDto() {
+        if (1 == 1) {
             return ResponseEntity.ok(new UserDto());
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
