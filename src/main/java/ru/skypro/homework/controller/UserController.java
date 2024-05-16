@@ -87,8 +87,8 @@ public class UserController {
     )
     @GetMapping("/me")
     public ResponseEntity<UserDto> getUserDto() {
-        if (1 == 1) {
-            return ResponseEntity.ok(new UserDto());
+        if (1==1) {
+            return ResponseEntity.ok().build();//(new UserDto());
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
