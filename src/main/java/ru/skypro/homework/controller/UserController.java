@@ -41,20 +41,14 @@ public class UserController {
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "OK"
-
-
             ),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized"
-
-
                     ),
                     @ApiResponse(
                             responseCode = "403",
                             description = "Forbidden"
-
-
                     )},
             tags = "Пользователи"
     )
@@ -137,24 +131,13 @@ public class UserController {
     }
     @Operation(
             summary = "Обновление аватара авторизованного пользователя",
-           /* requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ChangePassword.class)
-                    )
-            ),*/
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "OK"
-
-
             ),
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized"
-
-
-
                     )},
             tags = "Пользователи"
     )
