@@ -9,7 +9,7 @@ import ru.skypro.homework.service.UserService;
 public class UserServiceImpl implements UserService {
     @Override
     public boolean changePassword(ChangePassword changePassword) {
-        return false;
+        return true;
     }
 
     @Override
