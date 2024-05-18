@@ -10,7 +10,7 @@ import ru.skypro.homework.entity.Image;
 @AllArgsConstructor
 @Builder
 @Schema
-public class UserDto {
+public class User {
     private Integer id;
     private String email;
     private String firstName;

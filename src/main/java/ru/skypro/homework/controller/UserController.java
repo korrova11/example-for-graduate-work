@@ -6,11 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.*;
+import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.User;
 import ru.skypro.homework.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -52,10 +52,10 @@ public class UserController {
 
 
     @PostMapping("/set_password")
-    public ResponseEntity<?> changePassword(@RequestBody NewPassword newPassword) {
-        if (newPassword.equals("")) {
+    public ResponseEntity<?> setPassword(@RequestBody NewPassword changePassword) {
+        if (!userService.validationPassword(changePassword)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } else if (userService.changePassword(newPassword)) {
+        } else if (userService.changePassword(changePassword)) {
             return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -69,9 +69,8 @@ public class UserController {
 
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserDto.class),
-
-                           examples = @ExampleObject("{\n" +
+                            schema = @Schema(implementation = User.class),
+                            examples = @ExampleObject("{\n" +
                                     "  \"id\": 0,\n" +
                                     "  \"email\": \"string\",\n" +
                                     "  \"firstName\": \"string\",\n" +
@@ -91,9 +90,9 @@ public class UserController {
             tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserDto(@AuthenticationPrincipal UserDetails userDetails) {
-        if (userDetails.isEnabled()) {
-            return ResponseEntity.ok(userService.getUserDto());
+    public ResponseEntity<User> getUser() {
+        if (1 == 1) {
+            return ResponseEntity.ok().build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -104,7 +103,7 @@ public class UserController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UpdateUserDto.class)
+                            schema = @Schema(implementation = UpdateUser.class)
                     )
             ),
             responses = {@ApiResponse(
@@ -119,9 +118,9 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping("/me")
-    public ResponseEntity<UpdateUserDto> updateUser(@RequestBody UpdateUserDto updateUserDto){
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUserDto){
         if( updateUserDto.getFirstName().isBlank()){
-            return ResponseEntity.ok( UpdateUserDto.builder().build());}
+            return ResponseEntity.ok( UpdateUser.builder().build());}
                     else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -140,7 +139,7 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateImage( @RequestParam MultipartFile image) throws IOException {
+    public ResponseEntity<?> updateUserImage( @RequestParam MultipartFile image) throws IOException {
         if(1==1){
             return ResponseEntity.ok().build();}
         else {

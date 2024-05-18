@@ -2,11 +2,9 @@ package ru.skypro.homework.service.impl;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ad.Ad;
-import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
+import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.service.AdService;
-
-import java.io.IOException;
 
 @Service
 public class AdServiceImpl implements AdService {

@@ -1,23 +1,19 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.Implementation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skypro.homework.dto.ListCommentDto;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.Comments;
+import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.service.impl.CommentServiceImpl;
 
-import java.util.List;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -32,11 +28,7 @@ public class CommentController {
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Найдены комментарии",
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    array = @ArraySchema(schema = @Schema(implementation = Comment.class))
-                            )
+                            description = "Найдены комментарии"
 
                     ),
                     @ApiResponse(
@@ -51,7 +43,7 @@ public class CommentController {
             tags = "Комментарии"
     )
     @GetMapping("{id}/comments")
-    public ResponseEntity<ListCommentDto>getComment(@PathVariable Integer id) {
+    public ResponseEntity<Comments> getComments(@PathVariable Integer id) {
         if (id.equals(id)) {
             return ResponseEntity.ok().build();
         } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
@@ -84,7 +76,7 @@ public class CommentController {
             tags = "Комментарии"
     )
     @PostMapping("{id}/comments")
-    public ResponseEntity<Comment> createComment(@RequestBody Comment comment) {
+    public ResponseEntity<Comment> addComment(@RequestBody CreateOrUpdateComment comment) {
         if (comment.equals(comment)) {
             return ResponseEntity.ok().build();
         } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
@@ -94,12 +86,7 @@ public class CommentController {
     @Operation(summary = "Удаление комментария",
             responses = {
                     @ApiResponse(
-                            responseCode = "200",
-
-                            content = @Content(
-                                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                                    schema = @Schema(implementation = Comment.class)
-                            )
+                            responseCode = "200"
                     ),
                     @ApiResponse(
                             responseCode = "401",
@@ -118,12 +105,14 @@ public class CommentController {
 
 
     @DeleteMapping("{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> removeComment(@PathVariable Integer adId) { // добавить объявление
+    public ResponseEntity<?> deleteComment(@PathVariable Integer adId,
+                                           @PathVariable Integer commentId) { // добавить объявление
         // если объявление найдено и коммент найден, ОК
         // если не авторизирован, не ок
         // прописать ошибки Forbidden и Not found
         return ResponseEntity.ok().build();
     }
+
     @Operation(summary = "Обновление комментария",
             responses = {
                     @ApiResponse(
@@ -149,7 +138,9 @@ public class CommentController {
             },
             tags = "Комментарии")
     @PatchMapping("{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId) { // добавить объявление
+    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
+                                                 @PathVariable Integer commentId,
+                                                 @RequestBody CreateOrUpdateComment createOrUpdateComment) {
         // если объявление найдено и коммент найден, ОК
         // если не авторизирован, не ок
         // прописать ошибки Forbidden и Not found

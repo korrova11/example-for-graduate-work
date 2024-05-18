@@ -1,11 +1,13 @@
 package ru.skypro.homework.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Data;
 import ru.skypro.homework.entity.Comment;
 
 import java.util.List;
-@AllArgsConstructor
-public class ListCommentDto {
+
+
+@Data
+public class Comments {
+    private int count;
     private List<Comment> results;
-    private int count=results.size();
 }
