@@ -12,9 +12,12 @@ import net.bytebuddy.implementation.Implementation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.skypro.homework.dto.ListCommentDto;
 import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.service.impl.CommentServiceImpl;
+
+import java.util.List;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -48,7 +51,7 @@ public class CommentController {
             tags = "Комментарии"
     )
     @GetMapping("{id}/comments")
-    public ResponseEntity<Comment> getComment(@PathVariable Integer id) {
+    public ResponseEntity<ListCommentDto>getComment(@PathVariable Integer id) {
         if (id.equals(id)) {
             return ResponseEntity.ok().build();
         } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
