@@ -12,13 +12,14 @@ import javax.persistence.Id;
 @Data
 @NoArgsConstructor
 public class Comment {
-    @GeneratedValue
-    @Id
-    private Integer pk;
+
     private Integer author;
     private String authorImage;
     private String authorFirstName;
     private Integer createdAt;
+    @GeneratedValue
+    @Id
+    private Integer pk;
     private String text;
 
 }

@@ -3,21 +3,17 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.implementation.Implementation;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.ListCommentDto;
-import ru.skypro.homework.dto.UserDto;
 import ru.skypro.homework.entity.Comment;
 import ru.skypro.homework.service.impl.CommentServiceImpl;
 
-import java.util.List;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -118,12 +114,14 @@ public class CommentController {
 
 
     @DeleteMapping("{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> removeComment(@PathVariable Integer adId) { // добавить объявление
+    public ResponseEntity<Comment> removeComment(@PathVariable Integer adId,
+                                                 @PathVariable Integer commentId ) { // добавить объявление
         // если объявление найдено и коммент найден, ОК
         // если не авторизирован, не ок
         // прописать ошибки Forbidden и Not found
         return ResponseEntity.ok().build();
     }
+
     @Operation(summary = "Обновление комментария",
             responses = {
                     @ApiResponse(
@@ -149,7 +147,8 @@ public class CommentController {
             },
             tags = "Комментарии")
     @PatchMapping("{adId}/comments/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId) { // добавить объявление
+    public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
+                                                 @PathVariable Integer commentId) {
         // если объявление найдено и коммент найден, ОК
         // если не авторизирован, не ок
         // прописать ошибки Forbidden и Not found
