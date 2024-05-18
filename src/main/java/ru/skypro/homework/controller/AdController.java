@@ -1,10 +1,7 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Encoding;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +9,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ad.Ad;
-import ru.skypro.homework.dto.ad.Ads;
-import ru.skypro.homework.dto.ad.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ad.ExtendedAd;
-import ru.skypro.homework.entity.Comment;
+import ru.skypro.homework.dto.Ad;
+import ru.skypro.homework.dto.Ads;
+import ru.skypro.homework.dto.CreateOrUpdateAd;
+import ru.skypro.homework.dto.ExtendedAd;
+import ru.skypro.homework.entity.Image;
 import ru.skypro.homework.service.AdService;
+
+import java.awt.*;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -65,21 +64,8 @@ public class AdController {
                     responseCode = "200", description = "OK",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Ad.class),
-                            examples = @ExampleObject
-                                    ("{\n" +
-                                            " \"count\": 0,\n" +
-                                            " \results\": [ \n" +
-                                            "{\n" +
-                                            "  \"author\": 0,\n" +
-                                            "  \"image\": \"string\",\n" +
-                                            "  \"pk\": 0,\n" +
-                                            "  \"price\": 0,\",\n" +
-                                            "  \"title\": \"string\",\n" +
-                                            "}" +
-                                            "] \n" +
-                                            "}"
-                                    )
+                            schema = @Schema(implementation = Ads.class)
+
                     )
 
             ),
@@ -89,7 +75,7 @@ public class AdController {
     )
 
     @GetMapping()
-    public ResponseEntity<?> getAllAds() {
+    public ResponseEntity<Ads> getAllAds() {
         return null;
     }
 
@@ -135,23 +121,9 @@ public class AdController {
             ),
             responses = {@ApiResponse(responseCode = "201", description = "Created", content = @Content(
                     schema = @Schema(
-                            implementation = Ad.class
-                    ),
+                            implementation = ExtendedAd.class
+                    )
 
-                    examples = @ExampleObject
-                            ("{\n" +
-                                    " \"count\": 0,\n" +
-                                    " \results\": [ \n" +
-                                    "{\n" +
-                                    "  \"author\": 0,\n" +
-                                    "  \"image\": \"string\",\n" +
-                                    "  \"pk\": 0,\n" +
-                                    "  \"price\": 0,\",\n" +
-                                    "  \"title\": \"string\",\n" +
-                                    "}" +
-                                    "] \n" +
-                                    "}"
-                            )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
                     @ApiResponse(responseCode = "404", description = "Not found")
@@ -167,15 +139,20 @@ public class AdController {
             tags = "Объявления",
             summary = "Обновление информации об объявлении",
             operationId = "updateAds",
-            responses = {@ApiResponse(
-                    responseCode = "200", description = "OK"
-            ),
-                    @ApiResponse(
-                            responseCode = "401", description = "Unauthorized"
-                    )}
+            responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
+                    schema = @Schema(
+                            implementation = Ad.class
+                    )
+
+            )),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden")
+            }
     )
     @PatchMapping("{id}")
-    public ResponseEntity<?> updateAds(@RequestBody Ads ads) {
+    public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
+                                        @RequestBody CreateOrUpdateAd createOrUpdateAd) {
         return null;
     }
 
@@ -192,25 +169,10 @@ public class AdController {
                             ))
                     }
             ),
-            responses = {@ApiResponse(responseCode = "201", description = "Created", content = @Content(
+            responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
                     schema = @Schema(
-                            implementation = Ad.class
-                    ),
-
-                    examples = @ExampleObject
-                            ("{\n" +
-                                    " \"count\": 0,\n" +
-                                    " \results\": [ \n" +
-                                    "{\n" +
-                                    "  \"author\": 0,\n" +
-                                    "  \"image\": \"string\",\n" +
-                                    "  \"pk\": 0,\n" +
-                                    "  \"price\": 0,\",\n" +
-                                    "  \"title\": \"string\",\n" +
-                                    "}" +
-                                    "] \n" +
-                                    "}"
-                            )
+                            implementation = Ads.class
+                    )
             )),
                     @ApiResponse(responseCode = "401", description = "Unauthorized")
             }
@@ -225,15 +187,23 @@ public class AdController {
             tags = "Объявления",
             summary = "Обновление картинки объявления",
             operationId = "updateImage",
-            responses = {@ApiResponse(
-                    responseCode = "200", description = "OK"
-            ),
-                    @ApiResponse(
-                            responseCode = "401", description = "Unauthorized"
-                    )}
+            responses = {@ApiResponse(responseCode = "200", description = "OK", content = @Content(
+                    mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                    array = @ArraySchema(
+                            schema = @Schema(
+                                    type = "string",
+                                    format = "byte"
+                            )
+                    )
+
+            )),
+                    @ApiResponse(responseCode = "403", description = "Forbidden"),
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "404", description = "Not found")
+            }
     )
-    @PatchMapping("/{id}/image")
-    public ResponseEntity<?> updateImage(@PathVariable Integer id, @RequestBody MultipartFile image) {
+    @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Image> updateImage(@PathVariable Integer id, @RequestBody MultipartFile image) {
         return null;
     }
 
