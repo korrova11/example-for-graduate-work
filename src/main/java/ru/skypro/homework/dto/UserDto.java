@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import ru.skypro.homework.entity.Image;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,4 +17,5 @@ public class UserDto {
     private String lastName;
     private String phone;
     private Role role;
+    Image image;
 }

@@ -20,8 +20,6 @@ public class Image {
     @Lob
     @JsonIgnore
     private byte[] data;
-   /* @OneToOne
-    private SecurityProperties.User user;*/
 
 
 }
