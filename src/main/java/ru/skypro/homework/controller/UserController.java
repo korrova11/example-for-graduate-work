@@ -8,14 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.ChangePassword;
-import ru.skypro.homework.dto.Login;
-import ru.skypro.homework.dto.UpdateUserDto;
-import ru.skypro.homework.dto.UserDto;
-import ru.skypro.homework.entity.Image;
+import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.UpdateUser;
+import ru.skypro.homework.dto.User;
 import ru.skypro.homework.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -35,7 +32,7 @@ public class UserController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = ChangePassword.class)
+                            schema = @Schema(implementation = NewPassword.class)
                     )
             ),
             responses = {@ApiResponse(
@@ -55,8 +52,8 @@ public class UserController {
 
 
     @PostMapping("/set_password")
-    public ResponseEntity<?> changePassword(@RequestBody ChangePassword changePassword) {
-        if (changePassword.equals("")) {
+    public ResponseEntity<?> setPassword(@RequestBody NewPassword changePassword) {
+        if (!userService.validationPassword(changePassword)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else if (userService.changePassword(changePassword)) {
             return ResponseEntity.ok().build();
@@ -72,7 +69,7 @@ public class UserController {
 
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UserDto.class),
+                            schema = @Schema(implementation = User.class),
                             examples = @ExampleObject("{\n" +
                                     "  \"id\": 0,\n" +
                                     "  \"email\": \"string\",\n" +
@@ -93,7 +90,7 @@ public class UserController {
             tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<UserDto> getUserDto() {
+    public ResponseEntity<User> getUser() {
         if (1 == 1) {
             return ResponseEntity.ok().build();
         } else {
@@ -106,7 +103,7 @@ public class UserController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = UpdateUserDto.class)
+                            schema = @Schema(implementation = UpdateUser.class)
                     )
             ),
             responses = {@ApiResponse(
@@ -121,9 +118,9 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUserDto updateUserDto){
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUserDto){
         if( updateUserDto.getFirstName().isBlank()){
-            return ResponseEntity.ok( UpdateUserDto.builder().build());}
+            return ResponseEntity.ok( UpdateUser.builder().build());}
                     else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -142,7 +139,7 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateImage( @RequestParam MultipartFile image) throws IOException {
+    public ResponseEntity<?> updateUserImage( @RequestParam MultipartFile image) throws IOException {
         if(1==1){
             return ResponseEntity.ok().build();}
         else {

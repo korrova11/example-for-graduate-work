@@ -1,10 +1,11 @@
 package ru.skypro.homework.service;
 
-import ru.skypro.homework.dto.ChangePassword;
-import ru.skypro.homework.dto.UserDto;
+import ru.skypro.homework.dto.NewPassword;
+import ru.skypro.homework.dto.User;
 
 public interface UserService {
-    boolean changePassword(ChangePassword changePassword);
-    UserDto getUserDto();
+    boolean changePassword(NewPassword changePassword);
+    User getUserDto();
 
+    boolean validationPassword(NewPassword newPassword);
 }
