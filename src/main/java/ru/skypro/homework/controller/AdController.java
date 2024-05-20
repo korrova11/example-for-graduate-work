@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,10 +14,8 @@ import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.Ads;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.dto.ExtendedAd;
-import ru.skypro.homework.entity.Image;
+import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.service.AdService;
-
-import java.awt.*;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -52,7 +51,7 @@ public class AdController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Ad> addAd(@RequestPart(name = "image") MultipartFile image,
-                                   @RequestPart(name = "properties") CreateOrUpdateAd properties) {
+                                    @RequestPart(name = "properties") CreateOrUpdateAd properties) {
         Ad ad = adService.addAd(image, properties);
         return ResponseEntity.ok(ad);
     }
@@ -76,7 +75,7 @@ public class AdController {
     )
 
     @GetMapping()
-    public ResponseEntity<Ads> getAllAds() {
+    public ResponseEntity<?> getAllAds() {
         return null;
     }
 
