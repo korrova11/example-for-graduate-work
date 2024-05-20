@@ -1,18 +1,14 @@
 package ru.skypro.homework.entity;
-
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.repository.cdi.Eager;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 @Entity
 @Data
 @NoArgsConstructor
-public class Comment {
-
+public class CommentEntity {
     private Integer author;
     private String authorImage;
     private String authorFirstName;
@@ -21,5 +17,4 @@ public class Comment {
     @Id
     private Integer pk;
     private String text;
-
 }
