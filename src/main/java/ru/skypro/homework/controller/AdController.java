@@ -41,6 +41,7 @@ public class AdController {
                     }
             ),
             responses = {@ApiResponse(responseCode = "201", description = "Created", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
                     schema = @Schema(
                             implementation = Ad.class
                     )
@@ -50,7 +51,7 @@ public class AdController {
     )
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
+    public ResponseEntity<Ad> addAd(@RequestPart(name = "image") MultipartFile image,
                                    @RequestPart(name = "properties") CreateOrUpdateAd properties) {
         Ad ad = adService.addAd(image, properties);
         return ResponseEntity.ok(ad);
