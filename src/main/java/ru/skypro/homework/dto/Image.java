@@ -1,24 +1,23 @@
-package ru.skypro.homework.entity;
+package ru.skypro.homework.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 
-import javax.persistence.*;
 
-@Entity
-@NoArgsConstructor
+
+
+
 @Data
+@Builder
 public class Image {
-    @Id
-    @GeneratedValue
+
     private Long id;
     private String filePath;
     private long fileSize;
     private String mediaType;
-    @Lob
-    @JsonIgnore
     private byte[] data;
 
 
