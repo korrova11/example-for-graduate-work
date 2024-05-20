@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
@@ -108,8 +109,14 @@ public class UserController {
             ),
             responses = {@ApiResponse(
                     responseCode = "200",
-                    description = "OK"
-            ),
+                    description = "OK",
+                     content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(
+                            implementation = UpdateUser.class
+                    )
+            )),
+
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized"
@@ -118,8 +125,8 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUserDto){
-        if( updateUserDto.getFirstName().isBlank()){
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser){
+        if( updateUser.getFirstName().isBlank()){
             return ResponseEntity.ok( UpdateUser.builder().build());}
                     else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
