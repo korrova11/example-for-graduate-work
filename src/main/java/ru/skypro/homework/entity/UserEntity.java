@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.Role;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,5 +25,8 @@ public class UserEntity {
     private String lastName;
     private String phone;
     private Role role;
+    /*@OneToMany(mappedBy = "ads")
+    private List<AdsEntity> adsEntityList;
+*/
 
 }
