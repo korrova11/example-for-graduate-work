@@ -71,7 +71,7 @@ public class UserController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = User.class),
-                            examples = @ExampleObject("{\n" +
+                           examples = @ExampleObject("{\n" +
                                     "  \"id\": 0,\n" +
                                     "  \"email\": \"string\",\n" +
                                     "  \"firstName\": \"string\",\n" +

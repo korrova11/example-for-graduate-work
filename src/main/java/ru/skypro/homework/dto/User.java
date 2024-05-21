@@ -16,5 +16,6 @@ public class User {
     private String lastName;
     private String phone;
     private Role role;
-    Image image;
+    @Schema( type = "string", format = "binary")
+    private Image image;
 }
