@@ -8,6 +8,7 @@ import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.User;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Ads")
@@ -31,6 +32,7 @@ public class AdsEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-
+    @OneToMany(mappedBy = "ads", fetch = FetchType.LAZY)
+    private List<CommentEntity> comments;
 
 }
