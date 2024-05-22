@@ -18,7 +18,7 @@ import java.util.List;
 @Data
 public class AdsEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) //делегирует установку ID на уровень базы данных(для бд PRIMARY KEY, AUTOINCREMENT)
+    @GeneratedValue//(strategy = GenerationType.IDENTITY) //делегирует установку ID на уровень базы данных(для бд PRIMARY KEY, AUTOINCREMENT)
     @Column(name = "id")
     private Long id;
     @Column(name = "price")
