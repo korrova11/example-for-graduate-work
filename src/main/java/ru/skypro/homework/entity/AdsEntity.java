@@ -1,6 +1,8 @@
 package ru.skypro.homework.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.User;
