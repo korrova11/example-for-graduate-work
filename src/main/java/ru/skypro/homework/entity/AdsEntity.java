@@ -1,6 +1,8 @@
 package ru.skypro.homework.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.User;
@@ -9,6 +11,10 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "Ads")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Data
 public class AdsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //делегирует установку ID на уровень базы данных(для бд PRIMARY KEY, AUTOINCREMENT)
@@ -23,9 +29,8 @@ public class AdsEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
-//    @OneToMany(mappedBy = "adsEntity", fetch = FetchType.LAZY)
-//    private List<Коммент ентити> коммент;
+
 
 }
