@@ -15,13 +15,19 @@ public class CommentEntity {
     @Id
     @GeneratedValue
     private Integer id;
-    @Column
-    private UserEntity user;
+
     @Column
     private LocalDateTime createAt;
+
     @Column
     private String text;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "userEntity_id")
+    private UserEntity userEntity;
+
     @ManyToOne
     @JoinColumn(name = "ads_id")
     private AdsEntity ads;
+
 }
