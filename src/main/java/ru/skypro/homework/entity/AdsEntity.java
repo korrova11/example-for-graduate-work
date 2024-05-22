@@ -23,7 +23,7 @@ public class AdsEntity {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserEntity user;
 
 //    @OneToMany(mappedBy = "adsEntity", fetch = FetchType.LAZY)
 //    private List<Коммент ентити> коммент;
