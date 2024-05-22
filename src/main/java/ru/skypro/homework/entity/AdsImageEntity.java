@@ -14,6 +14,6 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AdsImageEntity extends ImageEntity{
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AdsEntity_id")
+    @JoinColumn(name = "adsEntity_id")
     private AdsEntity adsEntity;
 }
