@@ -1,6 +1,8 @@
 package ru.skypro.homework.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.User;
@@ -10,6 +12,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "Ads")
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Data
 public class AdsEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) //делегирует установку ID на уровень базы данных(для бд PRIMARY KEY, AUTOINCREMENT)
