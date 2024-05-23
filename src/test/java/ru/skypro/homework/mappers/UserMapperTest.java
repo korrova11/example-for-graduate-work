@@ -34,7 +34,7 @@ public class UserMapperTest {
     @Test
     public void shouldUserEntityToUser(){
         UserEntity userEntity = UserEntity.builder()
-                .id(1l)
+                .id(1L)
                 .lastName("фамилия")
                 .firstName("имя")
                 .phone("111")
