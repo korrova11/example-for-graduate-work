@@ -23,6 +23,8 @@ import ru.skypro.homework.service.AdService;
 @RequiredArgsConstructor
 @RequestMapping("/ads")
 public class AdController {
+
+
     private final AdService adService;
 //    private final Comment comment;
 
@@ -50,7 +52,7 @@ public class AdController {
     )
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Ad> addAd(@RequestPart(name = "image") MultipartFile image,
+    public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
                                     @RequestPart(name = "properties") CreateOrUpdateAd properties) {
         Ad ad = adService.addAd(image, properties);
         return ResponseEntity.ok(ad);
