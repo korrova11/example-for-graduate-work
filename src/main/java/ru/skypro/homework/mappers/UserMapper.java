@@ -14,11 +14,8 @@ import ru.skypro.homework.repository.AvatarRepository;
 @Component
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-    // private AvatarRepository avatarRepository;
 
-    @Mappings({
-            @Mapping(target = "email", source = "login"),
-    })
+    @Mapping(target = "email", source = "login")
     User userEntityToUser(UserEntity userEntity);
 
     @Mapping(target = "login", source = "username")
