@@ -146,11 +146,11 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> updateUserImage( @RequestParam MultipartFile image) throws IOException {
+    public void updateUserImage( @RequestParam MultipartFile image) throws IOException {
         if(1==1){
-            return ResponseEntity.ok().build();}
+             ResponseEntity.ok().build();}
         else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
     }
