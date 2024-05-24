@@ -53,13 +53,13 @@ public class UserController {
 
 
     @PostMapping("/set_password")
-    public ResponseEntity<?> setPassword(@RequestBody NewPassword changePassword) {
+    public void setPassword(@RequestBody NewPassword changePassword) {
         if (!userService.validationPassword(changePassword)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+             ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else if (userService.changePassword(changePassword)) {
-            return ResponseEntity.ok().build();
+             ResponseEntity.ok().build();
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -91,7 +91,7 @@ public class UserController {
             tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<User> getUser() {
+    public ResponseEntity<?> getUser() {
         if (1 == 1) {
             return ResponseEntity.ok().build();
         } else {

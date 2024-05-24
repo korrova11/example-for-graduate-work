@@ -3,6 +3,8 @@ package ru.skypro.homework.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.Pattern;
+
 @Data
 public class ExtendedAd {
     private Integer pk;
@@ -11,6 +13,7 @@ public class ExtendedAd {
     private String description;
     private String email;
     private String image;
+    @Pattern(regexp = ("\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}"))
     private String phone;
     private Integer price;
     private String title;
