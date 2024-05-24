@@ -9,6 +9,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "photo")
 public class AdsImageEntity extends ImageEntity {
 
     @OneToOne(fetch = FetchType.LAZY)

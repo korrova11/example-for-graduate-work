@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
+@Table(name = "users")
 public class UserEntity {
     @GeneratedValue
     @Id
