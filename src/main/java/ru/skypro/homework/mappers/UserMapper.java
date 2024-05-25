@@ -8,17 +8,13 @@ import org.springframework.stereotype.Component;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
-import ru.skypro.homework.repository.AvatarRepository;
 
 @Mapper(componentModel = "spring")
 @Component
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-    // private AvatarRepository avatarRepository;
 
-    @Mappings({
-            @Mapping(target = "email", source = "login"),
-    })
+    @Mapping(target = "email", source = "login")
     User userEntityToUser(UserEntity userEntity);
 
     @Mapping(target = "login", source = "username")

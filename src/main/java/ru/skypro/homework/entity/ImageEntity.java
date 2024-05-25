@@ -7,12 +7,14 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-@Entity
+//@Entity
+@MappedSuperclass
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
+@Builder
 
-public class ImageEntity {
+public  class ImageEntity {
     @Id
     @GeneratedValue
     private Long id;
