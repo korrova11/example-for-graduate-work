@@ -7,6 +7,7 @@ import java.util.List;
 
 @Data
 public class Ads {
-    private Integer count;
+    private Integer count;//=results.size();
     private List<Ad> results;
+
 }

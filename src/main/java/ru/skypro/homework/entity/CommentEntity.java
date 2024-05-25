@@ -28,6 +28,6 @@ public class CommentEntity {
 
     @ManyToOne
     @JoinColumn(name = "ads_id")
-    private AdsEntity ads;
+    private AdEntity ads;
 
 }

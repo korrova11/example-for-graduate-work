@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.skypro.homework.dto.Image;
-import ru.skypro.homework.dto.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -16,9 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
-public class AdsEntity {
+public class AdEntity {
     @Id
-    @GeneratedValue//(strategy = GenerationType.IDENTITY) //делегирует установку ID на уровень базы данных(для бд PRIMARY KEY, AUTOINCREMENT)
+    @GeneratedValue
     @Column(name = "id")
     private Long id;
     @Column(name = "price")

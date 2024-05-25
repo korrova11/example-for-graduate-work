@@ -26,6 +26,6 @@ public class UserEntity {
     private String phone;
     private Role role;
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<AdsEntity> adsList;
+    private List<AdEntity> adList;
 
 }
