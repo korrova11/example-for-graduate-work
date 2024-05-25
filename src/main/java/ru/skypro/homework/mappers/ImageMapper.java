@@ -11,7 +11,7 @@ import ru.skypro.homework.entity.ImageEntity;
 @Component
 public interface ImageMapper {
     ImageMapper INSTANCEIM = Mappers.getMapper(ImageMapper.class);
-   // @Mapping(/source = "id",target = "id")
+
     Image imageEntityToImage(ImageEntity imageEntity);
     ImageEntity imageToImageEntity(Image image);
 }
