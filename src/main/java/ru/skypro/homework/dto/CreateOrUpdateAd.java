@@ -1,11 +1,13 @@
 package ru.skypro.homework.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
+@Builder
 @Data
 public class CreateOrUpdateAd {
     @Size(min = 4, max=32)

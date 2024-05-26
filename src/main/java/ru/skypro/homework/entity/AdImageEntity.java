@@ -1,7 +1,6 @@
 package ru.skypro.homework.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -9,11 +8,10 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "photo")
-public class AdsImageEntity extends ImageEntity {
+public class AdImageEntity extends ImageEntity {
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adsEntity_id")
-    private AdsEntity adsEntity;
+    @JoinColumn(name = "adEntity_id")
+    private AdEntity adEntity;
 
 }

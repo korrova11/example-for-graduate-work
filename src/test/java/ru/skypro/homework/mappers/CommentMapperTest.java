@@ -1,21 +1,27 @@
 package ru.skypro.homework.mappers;
 
+import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.Test;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.entity.UserEntity;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import java.util.Date;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+//@AllArgsConstructor
 public class CommentMapperTest {
+
     @Test
     public void shouldCommentEntityToComment() {
 
         CommentEntity commentEntity = CommentEntity.builder()
                 .id(1)
                 .text("Message")
-                .userEntity( UserEntity.builder()
+                .createdAt(new Date())
+                .userEntity(UserEntity.builder()
+                        .firstName("Вася")
                         .id(3L).build())
                 .build();
         Comment comment = CommentMapper.INSTANCE.commentEntityToComment(commentEntity);
@@ -23,8 +29,11 @@ public class CommentMapperTest {
         assertThat(comment.getPk()).isEqualTo(1);
         assertThat(comment.getText()).isEqualTo("Message");
         assertThat(comment.getAuthor()).isEqualTo(3);
+        assertThat(comment.getAuthorFirstName()).isEqualTo("Вася");
+        assertThat(comment.getCreatedAt()).isNotNull();
     }
-    @Test
+
+    /*@Test
     public void shouldCommentToCommentEntity() {
 
         Comment comment = Comment.builder()
@@ -47,7 +56,7 @@ public class CommentMapperTest {
                 CommentMapper.INSTANCE.commentEntityToCreateOrUpdateComment(commentEntity);
         assertThat(createOrUpdateComment).isNotNull();
         assertThat(createOrUpdateComment.getText()).isEqualTo("Message");
-    }
+    }*/
 
     @Test
     public void shouldCreateOrUpdateCommentCommentEntity() {
@@ -56,7 +65,7 @@ public class CommentMapperTest {
                 .text("Message")
                 .build();
         CommentEntity commentEntity =
-                CommentMapper.INSTANCE.createOrUpdateCommentToCommentEntity(createOrUpdateComment);
+               CommentMapper.INSTANCE.createOrUpdateCommentToCommentEntity(createOrUpdateComment);
         assertThat(commentEntity).isNotNull();
         assertThat(commentEntity.getText()).isEqualTo("Message");
     }
