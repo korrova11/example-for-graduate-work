@@ -16,14 +16,16 @@ import ru.skypro.homework.entity.UserEntity;
 @Component
 public interface UserMapper {
     UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
+
     @Mappings({
             @Mapping(target = "email", source = "login"),
 
     })
 
-    User userEntityToUser(UserEntity userEntity);
+    public abstract User userEntityToUser(UserEntity userEntity);
     @Mapping(target = "login", source = "username")
-    UserEntity registerToUserEntity(Register register);
+    public abstract UserEntity registerToUserEntity(Register register);
 
-    UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
+
+    public abstract UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
 }
