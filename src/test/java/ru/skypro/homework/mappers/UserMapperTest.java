@@ -3,6 +3,7 @@ package ru.skypro.homework.mappers;
 import org.junit.jupiter.api.Test;
 import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.UserEntity;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -46,6 +47,18 @@ public class UserMapperTest {
         assertThat(user.getPhone()).isEqualTo("111");
         assertThat(user.getLastName()).isEqualTo("фамилия");
 
+    }
+    @Test
+    public void shouldUpdateUserToUserEntity(){
+        UpdateUser updateUser = UpdateUser.builder()
+                .firstName("имя")
+                .lastName("фамилия")
+                .phone("111")
+                .build();
+        UserEntity userEntity = UserMapper.INSTANCE.doUpdateUserToUserEntity(updateUser);
+        assertThat(userEntity.getPhone()).isEqualTo("111");
+        assertThat(userEntity.getLastName()).isEqualTo("фамилия");
+        assertThat(userEntity.getFirstName()).isEqualTo("имя");
     }
 
 
