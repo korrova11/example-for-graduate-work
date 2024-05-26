@@ -13,7 +13,8 @@ public interface  CommentMapper {
     CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
     @Mappings({
             @Mapping(source = "id", target = "pk"),
-            @Mapping(source = "commentEntity.userEntity.id", target = "author")
+            @Mapping(source = "commentEntity.userEntity.id", target = "author"),
+            @Mapping(source = "commentEntity.userEntity.firstName", target = "authorFirstName")
 
 
     })

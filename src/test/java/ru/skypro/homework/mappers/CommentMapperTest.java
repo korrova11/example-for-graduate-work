@@ -15,7 +15,8 @@ public class CommentMapperTest {
         CommentEntity commentEntity = CommentEntity.builder()
                 .id(1)
                 .text("Message")
-                .userEntity( UserEntity.builder()
+                .userEntity(UserEntity.builder()
+                        .firstName("Вася")
                         .id(3L).build())
                 .build();
         Comment comment = CommentMapper.INSTANCE.commentEntityToComment(commentEntity);
@@ -23,7 +24,9 @@ public class CommentMapperTest {
         assertThat(comment.getPk()).isEqualTo(1);
         assertThat(comment.getText()).isEqualTo("Message");
         assertThat(comment.getAuthor()).isEqualTo(3);
+        assertThat(comment.getAuthorFirstName()).isEqualTo("Вася");
     }
+
     @Test
     public void shouldCommentToCommentEntity() {
 
