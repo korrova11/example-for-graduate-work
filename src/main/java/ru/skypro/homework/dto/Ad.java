@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Data
-//@Schema//( type = "string", format = "binary")
 public class Ad {
     private Integer pk;
     private Integer author;

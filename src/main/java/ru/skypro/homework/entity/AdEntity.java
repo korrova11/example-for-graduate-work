@@ -24,7 +24,7 @@ public class AdEntity {
     @Column(name = "title")
     private String title;
     @Column(name = "descriptions")
-    private String descriptions;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
