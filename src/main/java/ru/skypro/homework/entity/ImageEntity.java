@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 //@Entity
-@MappedSuperclass
+
 @NoArgsConstructor
 @Data
 @AllArgsConstructor
 @Builder
+@Entity
 
 public  class ImageEntity {
     @Id

@@ -26,7 +26,9 @@ public class UserEntity {
     private String lastName;
     private String phone;
     private Role role;
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private List<AdEntity> adList;
+    @JoinColumn(referencedColumnName = "id", name = "image_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private ImageEntity imageEntity;
+
 
 }

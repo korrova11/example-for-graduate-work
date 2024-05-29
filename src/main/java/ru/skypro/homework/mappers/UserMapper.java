@@ -10,6 +10,7 @@ import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.AvatarEntity;
+import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 
 @Mapper(componentModel = "spring")
@@ -19,13 +20,18 @@ public interface UserMapper {
 
     @Mappings({
             @Mapping(target = "email", source = "login"),
-
+            @Mapping(target = "image", expression = "java(userEntity.getImageEntity()==null?\"\":\"/image/download/\"+userEntity.getImageEntity().getId())")
     })
+    User userEntityToUser(UserEntity userEntity);
 
-    public abstract User userEntityToUser(UserEntity userEntity);
+    @Mapping(target = "imageEntity", ignore = true)
     @Mapping(target = "login", source = "username")
-    public abstract UserEntity registerToUserEntity(Register register);
+    @Mapping(target = "id", ignore = true)
+    UserEntity registerToUserEntity(Register register);
+
+    UpdateUser userEntityToUpdateUser(UserEntity user);
 
 
-    public abstract UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
+    //UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
+
 }
