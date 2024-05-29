@@ -32,6 +32,6 @@ public interface UserMapper {
     UpdateUser userEntityToUpdateUser(UserEntity user);
 
 
-    //UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
+    UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
 
 }

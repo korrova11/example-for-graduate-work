@@ -7,8 +7,6 @@ import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.entity.AdEntity;
 
 public interface AdService{
-    Ad addAd (MultipartFile image, CreateOrUpdateAd properties);
-
-
+    Ad addAd( MultipartFile image,CreateOrUpdateAd ad);
 
 }

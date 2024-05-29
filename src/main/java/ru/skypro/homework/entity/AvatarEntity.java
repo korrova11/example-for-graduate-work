@@ -11,7 +11,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 
-
 public class AvatarEntity extends ImageEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "userEntity_id")
