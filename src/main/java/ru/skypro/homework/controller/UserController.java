@@ -3,6 +3,7 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -55,11 +56,11 @@ public class UserController {
     @PostMapping("/set_password")
     public void setPassword(@RequestBody NewPassword changePassword) {
         if (!userService.validationPassword(changePassword)) {
-             ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+            ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         } else if (userService.changePassword(changePassword)) {
-             ResponseEntity.ok().build();
+            ResponseEntity.ok().build();
         } else {
-             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
@@ -71,7 +72,7 @@ public class UserController {
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = User.class),
-                           examples = @ExampleObject("{\n" +
+                            examples = @ExampleObject("{\n" +
                                     "  \"id\": 0,\n" +
                                     "  \"email\": \"string\",\n" +
                                     "  \"firstName\": \"string\",\n" +
@@ -99,6 +100,7 @@ public class UserController {
         }
 
     }
+
     @Operation(
             summary = "Обновление информации об авторизованном пользователе",
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
@@ -110,29 +112,30 @@ public class UserController {
             responses = {@ApiResponse(
                     responseCode = "200",
                     description = "OK",
-                     content = @Content(
-                    mediaType = MediaType.APPLICATION_JSON_VALUE,
-                    schema = @Schema(
-                            implementation = UpdateUser.class
-                    )
-            )),
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = UpdateUser.class
+                            )
+                    )),
 
                     @ApiResponse(
                             responseCode = "401",
                             description = "Unauthorized"
                     )
-                    },
+            },
             tags = "Пользователи"
     )
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser){
-        if( updateUser.getFirstName().isBlank()){
-            return ResponseEntity.ok( UpdateUser.builder().build());}
-                    else {
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser) {
+        if (updateUser.getFirstName().isBlank()) {
+            return ResponseEntity.ok(UpdateUser.builder().build());
+        } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
     }
+
     @Operation(
             summary = "Обновление аватара авторизованного пользователя",
             responses = {@ApiResponse(
@@ -146,14 +149,24 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateUserImage( @RequestParam MultipartFile image) throws IOException {
-        if(1==1){
-             ResponseEntity.ok().build();}
-        else {
-             ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public void updateUserImage(@RequestParam MultipartFile image) throws IOException {
+        //  String url = String.valueOf(image.getResource());
+        if (1 == 1) {
+            ResponseEntity.ok().build();
+        } else {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
     }
-    }
+
+    /*@GetMapping("/image/download/{id}")
+    public ResponseEntity< byte[] > getImage (@PathVariable Long id){
+        Avatar avatar = avatarService.findAvatarByStudentId(id);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
+        headers.setContentLength(avatar.getData().length);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
+    }*/
+}
 
 

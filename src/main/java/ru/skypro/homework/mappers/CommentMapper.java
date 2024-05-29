@@ -18,8 +18,8 @@ public abstract class  CommentMapper {
             @Mapping(source = "id", target = "pk"),
             @Mapping(source = "commentEntity.userEntity.id", target = "author"),
             @Mapping(source = "commentEntity.userEntity.firstName", target = "authorFirstName"),
-            @Mapping(expression = "java(toMillisec(commentEntity))", target = "createdAt")
-
+            @Mapping(expression = "java(toMillisec(commentEntity))", target = "createdAt"),
+            @Mapping(target = "authorImage", expression = "java(commentEntity.getUserEntity().getImageEntity()==null?\"\":\"/image/download/\"+commentEntity.getUserEntity().getImageEntity().getId())")
     })
 
     public abstract Comment commentEntityToComment(CommentEntity commentEntity);

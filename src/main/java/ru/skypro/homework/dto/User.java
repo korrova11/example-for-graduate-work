@@ -21,6 +21,6 @@ public class User {
     @Pattern(regexp = ("\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}"))
     private String phone;
     private Role role;
-    @Schema( type = "string", format = "binary")
-    private Image image;
+    //@Schema( type = "string")
+    private String image;
 }
