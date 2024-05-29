@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users_avatar")
+
 
 public class AvatarEntity extends ImageEntity {
     @OneToOne(fetch = FetchType.LAZY)
