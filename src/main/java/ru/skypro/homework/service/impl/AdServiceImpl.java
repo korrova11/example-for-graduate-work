@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
 import ru.skypro.homework.dto.CreateOrUpdateAd;
 import ru.skypro.homework.entity.AdEntity;
-import ru.skypro.homework.repository.AdImageEntityRepository;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.service.AdService;
 

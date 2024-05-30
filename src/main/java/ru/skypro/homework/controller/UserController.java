@@ -18,6 +18,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import java.io.IOException;
 
@@ -27,7 +28,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Operation(
             summary = "Обновление пароля",
