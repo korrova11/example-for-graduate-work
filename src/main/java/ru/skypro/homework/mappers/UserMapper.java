@@ -17,7 +17,8 @@ public interface UserMapper {
 
     @Mappings({
             @Mapping(target = "email", source = "login"),
-            @Mapping(target = "image", expression = "java(userEntity.getImageEntity()==null?\"\":\"/image/download/\"+userEntity.getImageEntity().getId())")
+            @Mapping(target = "image", expression =
+                    "java(userEntity.getImageEntity()==null?\"\":\"/image/download/\"+userEntity.getImageEntity().getId())")
     })
     User userEntityToUser(UserEntity userEntity);
 
@@ -29,6 +30,11 @@ public interface UserMapper {
     UpdateUser userEntityToUpdateUser(UserEntity user);
 
 
+    @Mapping(target = "password", ignore = true)
+    @Mapping(target = "login", ignore = true)
+    @Mapping(target = "imageEntity", ignore = true)
+    @Mapping(target = "role", ignore = true)
+    @Mapping(target = "id", ignore = true)
     UserEntity doUpdateUserToUserEntity(UpdateUser updateUser);
 
 }

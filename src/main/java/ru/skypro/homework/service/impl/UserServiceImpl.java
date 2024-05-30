@@ -11,17 +11,20 @@ import ru.skypro.homework.service.UserService;
 @Service
 @AllArgsConstructor
 public class UserServiceImpl  {
-    private final UserRepository repositiry;
+    private final UserRepository repository;
 
     public boolean changePassword(NewPassword changePassword) {
         return true;
     }
 
     public UserEntity findById(Long id){
-        return repositiry.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow();
     }
     public User getUserDto() {
         return null;
+    }
+    public UserEntity findByLogin(String login){
+        return repository.findUserEntityByLogin(login);
     }
 
     public boolean validationPassword(NewPassword newPassword){

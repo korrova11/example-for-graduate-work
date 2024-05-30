@@ -20,6 +20,7 @@ public class UserEntity {
     @GeneratedValue
     @Id
     private Long id;
+    @Column( unique = true, nullable = false)
     private String login;
     private String password;
     private String firstName;
@@ -29,6 +30,5 @@ public class UserEntity {
     @JoinColumn(referencedColumnName = "id", name = "image_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ImageEntity imageEntity;
-
 
 }
