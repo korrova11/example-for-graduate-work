@@ -21,7 +21,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class ImageServiceImpl {
 
     private final UserServiceImpl userService;
-    private final AdServiceImpl adService;
+   // private final AdServiceImpl adService;
     private final ImageEntityRepository repository;
 
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
@@ -50,7 +50,7 @@ public class ImageServiceImpl {
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-    public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
+    /*public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
         AdEntity ad = adService.findById(id);
         Path filePath = Path.of("/image", ad + "." + getExtensions(image.getOriginalFilename()));
@@ -72,6 +72,6 @@ public class ImageServiceImpl {
         repository.save(imageEntity);
         ad.setImageEntity(imageEntity);
     }
-
+*/
 
 }

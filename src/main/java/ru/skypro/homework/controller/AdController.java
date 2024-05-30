@@ -5,17 +5,19 @@ import io.swagger.v3.oas.annotations.media.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.dto.Ad;
-import ru.skypro.homework.dto.Ads;
-import ru.skypro.homework.dto.CreateOrUpdateAd;
-import ru.skypro.homework.dto.ExtendedAd;
-import ru.skypro.homework.dto.Image;
+import org.webjars.NotFoundException;
+import ru.skypro.homework.dto.*;
 import ru.skypro.homework.service.AdService;
+import ru.skypro.homework.service.AuthService;
+import ru.skypro.homework.service.impl.AdServiceImpl;
+
+import java.io.IOException;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -24,14 +26,14 @@ import ru.skypro.homework.service.AdService;
 @RequestMapping("/ads")
 public class AdController {
 
+    private final AdServiceImpl adService;
+    private final AuthService authService;
 
-    private final AdService adService;
-//    private final Comment comment;
 
     @Operation(
             tags = "Объявления",
             summary = "Добавление обьявления",
-            operationId = "addAd",
+
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
                             mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -53,7 +55,7 @@ public class AdController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
-                                    @RequestPart(name = "properties") CreateOrUpdateAd properties) {
+                                   @RequestPart(name = "properties") CreateOrUpdateAd properties) throws IOException {
         Ad ad = adService.addAd(image, properties);
         return ResponseEntity.ok(ad);
     }
@@ -61,15 +63,13 @@ public class AdController {
     @Operation(
             tags = "Объявления",
             summary = "Получение всех объявлений",
-            operationId = "getAllAds",
+
             responses = {@ApiResponse(
                     responseCode = "200", description = "OK",
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
                             schema = @Schema(implementation = Ads.class)
-
                     )
-
             ),
                     @ApiResponse(
                             responseCode = "401", description = "Unauthorized")
@@ -78,7 +78,14 @@ public class AdController {
 
     @GetMapping()
     public ResponseEntity<?> getAllAds() {
-        return null;
+        Login login = new Login();
+        User user = new User();
+        if (authService.login(login.getUsername(), login.getPassword())) {
+            return ResponseEntity.ok(adService.getAll());
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
     }
 
     @Operation(
@@ -105,7 +112,8 @@ public class AdController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> removeAds(@PathVariable Integer id) {
-        return ResponseEntity.ok().build();
+        adService.deleteAd(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @Operation(
@@ -133,8 +141,9 @@ public class AdController {
     )
 
     @GetMapping("/{id}")
-    public ResponseEntity<ExtendedAd> getAds(@PathVariable Integer id) {
-        return null;
+    public ResponseEntity<ExtendedAd> getAd(@PathVariable Integer id) {
+               return ResponseEntity.ok(adService.getById(id));
+
     }
 
     @Operation(
