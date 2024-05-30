@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -110,11 +111,16 @@ public class AdController {
             }
     )
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> removeAds(@PathVariable Integer id) {
-        adService.deleteAd(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> removeAd(@PathVariable Integer id, Authentication authentication) {
+        if (adService.deleteAd(id, authentication.getName())) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
+
+
 
     @Operation(
             tags = "Объявления",
@@ -161,7 +167,7 @@ public class AdController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             }
     )
-    @PatchMapping("{id}")
+    @PatchMapping("/{id}")
     public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
                                         @RequestBody CreateOrUpdateAd createOrUpdateAd) {
         return null;
@@ -170,7 +176,7 @@ public class AdController {
     @Operation(
             tags = "Объявления",
             summary = "Получение объявлений авторизованного пользователя",
-            operationId = "getAdsMe",
+
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = {@Content(
                             mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -190,7 +196,7 @@ public class AdController {
     )
 
     @GetMapping("/me")
-    public ResponseEntity<Ads> getAdsMe(@RequestBody Ads ads) {
+    public ResponseEntity<Ads> getAdsMe() {
         return null;
     }
 

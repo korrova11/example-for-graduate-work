@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
@@ -93,7 +94,8 @@ public class UserController {
             tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<?> getUser() {
+    public ResponseEntity<?> getUser(Authentication authentication) {
+
         if (1 == 1) {
             return ResponseEntity.ok().build();
         } else {

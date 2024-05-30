@@ -29,6 +29,7 @@ public class ImageServiceImpl {
         UserEntity user = userService.findByLogin(login);
         Path filePath = Path.of("/image", user + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
+
         Files.deleteIfExists(filePath);
         try (
                 InputStream is = image.getInputStream();
