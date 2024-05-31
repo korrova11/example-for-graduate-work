@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,8 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 
 import ru.skypro.homework.service.impl.CommentServiceImpl;
 
+import java.util.Optional;
+
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -22,7 +25,7 @@ import ru.skypro.homework.service.impl.CommentServiceImpl;
 @RequiredArgsConstructor
 @RequestMapping("/ads")
 public class CommentController {
-    private final CommentServiceImpl commentServiceImpl;
+    private final CommentServiceImpl commentService;
 
     @Operation(
             summary = "Получение комментариев объявления",
@@ -45,10 +48,10 @@ public class CommentController {
     )
     @GetMapping("{id}/comments")
     public ResponseEntity<Comments> getComments(@PathVariable Integer id) {
-        if (id.equals(id)) {
-            return ResponseEntity.ok().build();
-        } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
-        return ResponseEntity.ok().build();
+       Optional<Comments> comments = commentService.getAllByAd(id.longValue());
+       if (comments.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       else
+        return ResponseEntity.ok(comments.get());
     }
 
     @Operation(

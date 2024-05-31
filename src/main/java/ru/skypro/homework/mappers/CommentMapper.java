@@ -13,7 +13,7 @@ import ru.skypro.homework.entity.CommentEntity;
 @Mapper
 @Data
 public abstract class  CommentMapper {
-    static CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
+    public static CommentMapper INSTANCE = Mappers.getMapper(CommentMapper.class);
     @Mappings({
             @Mapping(source = "id", target = "pk"),
             @Mapping(source = "commentEntity.userEntity.id", target = "author"),

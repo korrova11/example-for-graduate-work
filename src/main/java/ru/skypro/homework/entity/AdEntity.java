@@ -20,7 +20,7 @@ public class AdEntity {
     @Column(name = "id")
     private Long id;
     @Column(name = "price")
-    private Long price;
+    private Integer price;
     @Column(name = "title")
     private String title;
     @Column(name = "descriptions")
