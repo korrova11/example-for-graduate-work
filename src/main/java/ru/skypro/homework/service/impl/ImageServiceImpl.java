@@ -12,6 +12,8 @@ import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.UUID;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -21,7 +23,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 public class ImageServiceImpl {
 
     private final UserServiceImpl userService;
-   // private final AdServiceImpl adService;
+    private final AdServiceImpl adService;
     private final ImageEntityRepository repository;
 
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
@@ -51,10 +53,10 @@ public class ImageServiceImpl {
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-    /*public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
-        AdEntity ad = adService.findById(id);
-        Path filePath = Path.of("/image", ad + "." + getExtensions(image.getOriginalFilename()));
+    public void uploadImage(Long id, MultipartFile image) throws IOException {
+
+        Path filePath = Path.of("/image", UUID.randomUUID() + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -65,6 +67,8 @@ public class ImageServiceImpl {
         ) {
             bis.transferTo(bos);
         }
+    }
+        /*AdEntity ad = adService.findById(id);
         ImageEntity imageEntity = repository.findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
@@ -72,7 +76,7 @@ public class ImageServiceImpl {
         imageEntity.setData(image.getBytes());
         repository.save(imageEntity);
         ad.setImageEntity(imageEntity);
-    }
 */
+
 
 }
