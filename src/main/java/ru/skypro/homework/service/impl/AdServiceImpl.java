@@ -45,6 +45,18 @@ public class AdServiceImpl implements AdService {
         return AdMapper.INSTANCE.adEntityToAd(adEntity);
 
     }
+    public Optional<Ad> changeAd(Integer id,CreateOrUpdateAd properties
+            , Authentication authentication){
+        AdEntity adEntity = repository.findById(id.longValue()).orElseThrow();
+        if((adEntity.getUser().getLogin()).equals(authentication.getName())){
+            adEntity.setPrice(properties.getPrice());
+            adEntity.setDescription(properties.getDescription());
+            adEntity.setTitle(properties.getTitle());
+            return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity));}
+        return Optional.empty();
+    }
+
+
 
     public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
@@ -87,7 +99,8 @@ public class AdServiceImpl implements AdService {
     }
 
     public boolean deleteAd(Integer id, String login)  {
-        AdEntity adEntity = repository.findById(id.longValue()).get();
+        AdEntity adEntity = repository.findById(id.longValue())
+                .orElseThrow();
         UserEntity userEntity = userService.findByLogin(login);
         if ((adEntity.getUser().getLogin()).equals(login) || userEntity.getRole() == Role.ADMIN) {
             repository.getReferenceById(id.longValue()).getComments()
@@ -102,6 +115,18 @@ public class AdServiceImpl implements AdService {
         if (ad.isPresent()) {
             return AdMapper.INSTANCE.adEntityToExtendedAd(ad.get());
         } else throw new NotFoundException("Отсутствует в базе");
+    }
+    public Ads getAdsByUser(Authentication authentication){
+        List<Ad> list = repository.findAll().stream()
+                .filter(adEntity -> (adEntity.getUser().getLogin()).equals(authentication.getName()))
+                .map(a -> AdMapper.INSTANCE.adEntityToAd(a)).collect(Collectors.toList());
+        return new Ads(list.size(), list);
+    }
+    public void changeImageAd(Long id, Authentication authentication,MultipartFile image)
+            throws IOException {
+        if ((findById(id).getUser().getLogin()).equals(authentication.getName())){
+        uploadImageForAd(id,image);
+        }
     }
 
 }

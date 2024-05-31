@@ -19,6 +19,8 @@ import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.impl.AdServiceImpl;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Slf4j
 @CrossOrigin(value = "http://localhost:3000")
@@ -109,6 +111,7 @@ public class AdController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeAd(@PathVariable Integer id, Authentication authentication) {
+
         if (adService.deleteAd(id, authentication.getName())) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
@@ -164,8 +167,13 @@ public class AdController {
     )
     @PatchMapping("/{id}")
     public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
-                                        @RequestBody CreateOrUpdateAd createOrUpdateAd) {
-        return null;
+                                        @RequestBody CreateOrUpdateAd createOrUpdateAd,
+                                        Authentication authentication) {
+        Optional<Ad> ad = adService.changeAd(id,createOrUpdateAd,authentication);
+        if (ad.isPresent()){
+            return ResponseEntity.ok(ad.get());
+        }
+        else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @Operation(
@@ -191,8 +199,8 @@ public class AdController {
     )
 
     @GetMapping("/me")
-    public ResponseEntity<Ads> getAdsMe() {
-        return null;
+    public ResponseEntity<Ads> getAdsMe(Authentication authentication) {
+        return ResponseEntity.ok(adService.getAdsByUser(authentication));
     }
 
     @Operation(
@@ -215,8 +223,11 @@ public class AdController {
             }
     )
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Image> updateImage(@PathVariable Integer id, @RequestBody MultipartFile image) {
-        return null;
+    public ResponseEntity<?> updateImage(@PathVariable Integer id,
+                                             @RequestBody MultipartFile image,
+                                             Authentication authentication) throws IOException {
+        adService.changeImageAd(id.longValue(),authentication,image);
+        return ResponseEntity.ok(Arrays.toString(image.getBytes()));
     }
 
 
