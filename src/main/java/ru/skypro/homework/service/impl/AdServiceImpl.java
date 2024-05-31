@@ -2,6 +2,7 @@ package ru.skypro.homework.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.webjars.NotFoundException;
@@ -11,6 +12,7 @@ import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mappers.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
+import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.ImageEntityRepository;
 import ru.skypro.homework.service.AdService;
 
@@ -30,9 +32,13 @@ public class AdServiceImpl implements AdService {
     //private final ImageServiceImpl imageService;
     private final ImageEntityRepository imageEntityRepository;
     private final UserServiceImpl userService;
+    private final CommentRepository commentRepository;
 
-    public Ad addAd(MultipartFile image, CreateOrUpdateAd properties) throws IOException {
+    public Ad addAd(MultipartFile image, CreateOrUpdateAd properties
+            , Authentication authentication) throws IOException {
+
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
+        adEntity.setUser(userService.findByLogin(authentication.getName()));
         repository.save(adEntity);
         uploadImageForAd(repository.save(adEntity).getId(), image);
 
@@ -54,7 +60,8 @@ public class AdServiceImpl implements AdService {
         ) {
             bis.transferTo(bos);
         }
-        ImageEntity imageEntity = imageEntityRepository.findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
+        ImageEntity imageEntity = imageEntityRepository
+                .findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
@@ -79,20 +86,22 @@ public class AdServiceImpl implements AdService {
         return repository.findById(id).orElseThrow();
     }
 
-    public boolean deleteAd(Integer id, String login) {
+    public boolean deleteAd(Integer id, String login)  {
         AdEntity adEntity = repository.findById(id.longValue()).get();
         UserEntity userEntity = userService.findByLogin(login);
         if ((adEntity.getUser().getLogin()).equals(login) || userEntity.getRole() == Role.ADMIN) {
+            repository.getReferenceById(id.longValue()).getComments()
+                    .forEach(commentRepository::delete);
             repository.deleteById(id.longValue());
-            return true;}
-        else return false;
-        }
-
-        public ExtendedAd getById (Integer id){
-            Optional<AdEntity> ad = repository.findById(id.longValue());
-            if (ad.isPresent()) {
-                return AdMapper.INSTANCE.adEntityToExtendedAd(ad.get());
-            } else throw new NotFoundException("Отсутствует в базе");
-        }
-
+            return true;
+        } else return false;
     }
+
+    public ExtendedAd getById(Integer id) {
+        Optional<AdEntity> ad = repository.findById(id.longValue());
+        if (ad.isPresent()) {
+            return AdMapper.INSTANCE.adEntityToExtendedAd(ad.get());
+        } else throw new NotFoundException("Отсутствует в базе");
+    }
+
+}

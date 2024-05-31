@@ -9,6 +9,6 @@ import ru.skypro.homework.entity.AdEntity;
 import java.io.IOException;
 
 public interface AdService{
-    Ad addAd( MultipartFile image,CreateOrUpdateAd ad) throws IOException;
+
 
 }

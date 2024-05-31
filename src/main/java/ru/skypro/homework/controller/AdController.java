@@ -56,9 +56,10 @@ public class AdController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
-                                   @RequestPart(name = "properties") CreateOrUpdateAd properties) throws IOException {
-        Ad ad = adService.addAd(image, properties);
-        return ResponseEntity.ok(ad);
+                                   @RequestPart(name = "properties") CreateOrUpdateAd properties,
+                                   Authentication authentication) throws IOException {
+        return new ResponseEntity<>(adService.addAd(image, properties,authentication), HttpStatus.CREATED);
+
     }
 
     @Operation(
@@ -79,15 +80,10 @@ public class AdController {
 
     @GetMapping()
     public ResponseEntity<?> getAllAds() {
-        Login login = new Login();
-        User user = new User();
-        if (authService.login(login.getUsername(), login.getPassword())) {
-            return ResponseEntity.ok(adService.getAll());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+                          return ResponseEntity.ok(adService.getAll());
+               }
 
-    }
+
 
     @Operation(
             tags = "Объявления",
@@ -114,12 +110,11 @@ public class AdController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeAd(@PathVariable Integer id, Authentication authentication) {
         if (adService.deleteAd(id, authentication.getName())) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
-
 
 
     @Operation(
@@ -148,7 +143,7 @@ public class AdController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ExtendedAd> getAd(@PathVariable Integer id) {
-               return ResponseEntity.ok(adService.getById(id));
+        return ResponseEntity.ok(adService.getById(id));
 
     }
 
