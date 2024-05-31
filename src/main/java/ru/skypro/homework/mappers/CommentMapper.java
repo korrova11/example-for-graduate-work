@@ -29,6 +29,10 @@ public abstract class  CommentMapper {
 
     public abstract CreateOrUpdateComment commentEntityToCreateOrUpdateComment(CommentEntity commentEntity);*/
 
+    @Mapping(target = "userEntity", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdAt", ignore = true)
+    @Mapping(target = "ads", ignore = true)
     public abstract CommentEntity createOrUpdateCommentToCommentEntity(CreateOrUpdateComment createOrUpdateComment);
     public Long toMillisec(CommentEntity commentEntity){
         return commentEntity.getCreatedAt().getTime();

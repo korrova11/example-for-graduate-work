@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.Ad;
@@ -18,6 +19,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import ru.skypro.homework.service.impl.UserServiceImpl;
 
 import java.io.IOException;
 
@@ -27,7 +29,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Operation(
             summary = "Обновление пароля",
@@ -92,7 +94,8 @@ public class UserController {
             tags = "Пользователи"
     )
     @GetMapping("/me")
-    public ResponseEntity<?> getUser() {
+    public ResponseEntity<?> getUser(Authentication authentication) {
+
         if (1 == 1) {
             return ResponseEntity.ok().build();
         } else {
