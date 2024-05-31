@@ -7,8 +7,7 @@ import lombok.Data;
 public class Ad {
     private Integer pk;
     private Integer author;
-    @Schema( type = "string", format = "binary")
-    private Image image;
+    private String image;
     private Integer price;
     private String title;
 }

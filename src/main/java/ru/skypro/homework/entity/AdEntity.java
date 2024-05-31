@@ -25,12 +25,15 @@ public class AdEntity {
     private String title;
     @Column(name = "descriptions")
     private String description;
+    @JoinColumn(referencedColumnName = "id", name = "image_id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private ImageEntity imageEntity;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "ads", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "ads", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 
 }
