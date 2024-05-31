@@ -27,20 +27,8 @@ public class ImageServiceImpl {
     private final ImageEntityRepository repository;
 
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
-
         UserEntity user = userService.findByLogin(login);
-        Path filePath = Path.of("/image", user + "." + getExtensions(image.getOriginalFilename()));
-        Files.createDirectories(filePath.getParent());
-
-        Files.deleteIfExists(filePath);
-        try (
-                InputStream is = image.getInputStream();
-                OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-                BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                BufferedOutputStream bos = new BufferedOutputStream(os, 1024);
-        ) {
-            bis.transferTo(bos);
-        }
+        Path filePath = uploadImage(user.getId(), image);
         ImageEntity imageEntity = repository.findById(user.getImageEntity().getId()).orElse(new ImageEntity());
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
@@ -54,7 +42,7 @@ public class ImageServiceImpl {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
-    public void uploadImage(Long id, MultipartFile image) throws IOException {
+    public Path uploadImage(Long id, MultipartFile image) throws IOException {
 
         Path filePath = Path.of("/image", UUID.randomUUID() + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -67,8 +55,11 @@ public class ImageServiceImpl {
         ) {
             bis.transferTo(bos);
         }
+        return filePath;
     }
-        /*AdEntity ad = adService.findById(id);
+    public void uploadImageForAd(Long id, MultipartFile image) throws IOException{
+        AdEntity ad = adService.findById(id);
+        Path filePath = uploadImage(id,image);
         ImageEntity imageEntity = repository.findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
@@ -76,7 +67,7 @@ public class ImageServiceImpl {
         imageEntity.setData(image.getBytes());
         repository.save(imageEntity);
         ad.setImageEntity(imageEntity);
-*/
 
+    }
 
 }
