@@ -33,8 +33,7 @@ public class AdEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToMany(/*mappedBy = "ads",*/ fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-
+    @OneToMany(mappedBy = "ads", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<CommentEntity> comments;
 
 }
