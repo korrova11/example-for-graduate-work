@@ -10,7 +10,6 @@ import ru.skypro.homework.dto.Register;
 import ru.skypro.homework.service.AuthService;
 
 
-
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -18,8 +17,6 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsManager manager;
     private final PasswordEncoder encoder;
     private final UserServiceImpl userService;
-
-
 
     @Override
     public boolean login(String userName, String password) {
@@ -42,8 +39,6 @@ public class AuthServiceImpl implements AuthService {
                         .username(register.getUsername())
                         .roles(register.getRole().name())
                         .build());
-
-
 
         return true;
     }
