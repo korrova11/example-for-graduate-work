@@ -1,6 +1,7 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
@@ -16,6 +17,7 @@ import ru.skypro.homework.service.UserService;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
@@ -35,8 +37,8 @@ public class UserServiceImpl  {
     public User getUserDto() {
         return null;
     }
-    public UserEntity findByLogin(String login){
-        return repository.findUserEntityByLogin(login);
+    public Optional<UserEntity> findByLogin(String login){
+        return repository.findByLogin(login);
     }
     public boolean adUser(Register register){
         UserEntity userEntity = UserMapper.INSTANCE.registerToUserEntity(register);
@@ -46,6 +48,11 @@ public class UserServiceImpl  {
         else return false;
 
     }
+    public User getUser(Authentication authentication){
+        if (findByLogin(authentication.getName()).isEmpty()) return null;
+        else return UserMapper.INSTANCE
+                .userEntityToUser(findByLogin(authentication.getName()).get());
+    }
 
     public boolean validationPassword(NewPassword newPassword){
         int n=newPassword.getNewPassword().length();
@@ -54,7 +61,7 @@ public class UserServiceImpl  {
         else {return true;}
     }
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
-        UserEntity user = findByLogin(login);
+        UserEntity user = findByLogin(login).get();
         Path filePath = Path.of("/image", user + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);

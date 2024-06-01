@@ -1,11 +1,14 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
+import ru.skypro.homework.dto.Role;
+import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.CommentEntity;
 import ru.skypro.homework.mappers.CommentMapper;
 import ru.skypro.homework.repository.CommentRepository;
@@ -33,16 +36,30 @@ public class CommentServiceImpl implements CommentService {
     }
     public Comment createOrUpdate(Integer id, CreateOrUpdateComment updateComment,
                                   Authentication authentication){
+        Optional<AdEntity> adEntity = adService.findById(id.longValue());
+        if (adEntity.isEmpty()) return null;
         CommentEntity commentEntity = CommentMapper.INSTANCE
                 .createOrUpdateCommentToCommentEntity(updateComment);
         commentEntity.setCreatedAt(new Date());
-        commentEntity.setUserEntity(userService.findByLogin(authentication.getName()));
-        commentEntity.setAds(adService.findById(id.longValue()));
+        commentEntity.setUserEntity(userService.findByLogin(authentication.getName()).get());
+        commentEntity.setAds(adEntity.get());
+
         Comment comment = CommentMapper.INSTANCE
                 .commentEntityToComment(commentRepository.save(commentEntity));
         return comment;
     }
-    public void deleteComment(Integer idAd,Integer idComment){
+    public HttpStatus deleteComment(Integer idAd, Integer idComment, Authentication authentication){
+         if(isMainOrAdmin(idComment,authentication)) return HttpStatus.FORBIDDEN;
+         if(findById(idComment).isEmpty()) return HttpStatus.NOT_FOUND;
         commentRepository.deleteById(idComment);
+        return HttpStatus.OK;
     }
+    public Optional<CommentEntity> findById(Integer id){
+        return commentRepository.findById(id);
+    }
+    public boolean isMainOrAdmin(Integer id, Authentication authentication) {
+        boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
+        return (authentication.getName()).equals(findById(id).get().getUserEntity().getLogin()) || admin;
+    }
+
 }
