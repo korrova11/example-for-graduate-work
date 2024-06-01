@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
@@ -54,12 +55,7 @@ public class UserServiceImpl  {
                 .userEntityToUser(findByLogin(authentication.getName()).get());
     }
 
-    public boolean validationPassword(NewPassword newPassword){
-        int n=newPassword.getNewPassword().length();
-        int m=newPassword.getCurrentPassword().length();
-        if ((n<8||n>16)||(m<8||m>16)){return false;}
-        else {return true;}
-    }
+
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
         UserEntity user = findByLogin(login).get();
         Path filePath = Path.of("/image", user + "." + getExtensions(image.getOriginalFilename()));
@@ -82,7 +78,17 @@ public class UserServiceImpl  {
         user.setImageEntity(imageEntity);
     }
     private String getExtensions(String fileName) {
+
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+    public boolean changeUser(UpdateUser updateUser, Authentication authentication){
+        UserEntity userEntity = repository.findByLogin(authentication.getName()).get();
+        userEntity.setPhone(updateUser.getPhone());
+        userEntity.setFirstName(updateUser.getFirstName());
+        userEntity.setLastName(updateUser.getLastName());
+        repository.save(userEntity);
+        return true;
+    }
+
 }
 
