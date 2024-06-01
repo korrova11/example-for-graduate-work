@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
@@ -80,7 +81,8 @@ public class CommentController {
             tags = "Комментарии"
     )
     @PostMapping("{id}/comments")
-    public ResponseEntity<Comment> addComment(@RequestBody CreateOrUpdateComment comment) {
+    public ResponseEntity<Comment> addComment(@PathVariable Integer id,@RequestBody CreateOrUpdateComment comment,
+                                              Authentication authentication) {
         if (comment.equals(comment)) {
             return ResponseEntity.ok().build();
         } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
@@ -114,6 +116,7 @@ public class CommentController {
         // если объявление найдено и коммент найден, ОК
         // если не авторизирован, не ок
         // прописать ошибки Forbidden и Not found
+        commentService.deleteComment(adId,commentId);
         return ResponseEntity.ok().build();
     }
 

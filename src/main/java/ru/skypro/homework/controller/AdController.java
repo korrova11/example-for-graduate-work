@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,7 @@ import ru.skypro.homework.service.impl.AdServiceImpl;
 
 import java.io.IOException;
 import java.util.Arrays;
+
 import java.util.Optional;
 
 @Slf4j
@@ -227,7 +228,8 @@ public class AdController {
                                              @RequestBody MultipartFile image,
                                              Authentication authentication) throws IOException {
         adService.changeImageAd(id.longValue(),authentication,image);
-        return ResponseEntity.ok(Arrays.toString(image.getBytes()));
+        return ResponseEntity.ok(Base64.encodeBase64URLSafeString(image.getBytes()));
+       // return ResponseEntity.ok(Arrays.toString(image.getBytes()));
     }
 
 
