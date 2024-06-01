@@ -45,17 +45,18 @@ public class AdServiceImpl implements AdService {
         return AdMapper.INSTANCE.adEntityToAd(adEntity);
 
     }
-    public Optional<Ad> changeAd(Integer id,CreateOrUpdateAd properties
-            , Authentication authentication){
+
+    public Optional<Ad> changeAd(Integer id, CreateOrUpdateAd properties
+            , Authentication authentication) {
         AdEntity adEntity = repository.findById(id.longValue()).orElseThrow();
-        if((adEntity.getUser().getLogin()).equals(authentication.getName())){
+        if ((adEntity.getUser().getLogin()).equals(authentication.getName())) {
             adEntity.setPrice(properties.getPrice());
             adEntity.setDescription(properties.getDescription());
             adEntity.setTitle(properties.getTitle());
-            return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity));}
+            return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity));
+        }
         return Optional.empty();
     }
-
 
 
     public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
@@ -98,35 +99,63 @@ public class AdServiceImpl implements AdService {
         return repository.findById(id).orElseThrow();
     }
 
-    public boolean deleteAd(Integer id, String login)  {
-        AdEntity adEntity = repository.findById(id.longValue())
-                .orElseThrow();
-        UserEntity userEntity = userService.findByLogin(login);
-        if ((adEntity.getUser().getLogin()).equals(login) || userEntity.getRole() == Role.ADMIN) {
+    /**
+     * метод проверяет содержание в репозитории объявления
+     * с указанным id и удаляет его и все комментарии к нему
+     *
+     * @param id
+     * @return
+     */
+    public boolean deleteAd(Integer id) {
+        Optional<AdEntity> adEntity = repository.findById(id.longValue());
+        if (adEntity.isEmpty()) {
+            return false;
+        } else {
             repository.getReferenceById(id.longValue()).getComments()
                     .forEach(commentRepository::delete);
             repository.deleteById(id.longValue());
             return true;
-        } else return false;
+        }
     }
+
+    /**
+     * метод возвращает дто объекта AdEntity по id
+     * @param id
+     * @return
+     */
 
     public ExtendedAd getById(Integer id) {
         Optional<AdEntity> ad = repository.findById(id.longValue());
         if (ad.isPresent()) {
             return AdMapper.INSTANCE.adEntityToExtendedAd(ad.get());
-        } else throw new NotFoundException("Отсутствует в базе");
+        } else return null;
     }
-    public Ads getAdsByUser(Authentication authentication){
+
+    public Ads getAdsByUser(Authentication authentication) {
         List<Ad> list = repository.findAll().stream()
                 .filter(adEntity -> (adEntity.getUser().getLogin()).equals(authentication.getName()))
                 .map(a -> AdMapper.INSTANCE.adEntityToAd(a)).collect(Collectors.toList());
         return new Ads(list.size(), list);
     }
-    public void changeImageAd(Long id, Authentication authentication,MultipartFile image)
+
+    public void changeImageAd(Long id, MultipartFile image)
             throws IOException {
-        if ((findById(id).getUser().getLogin()).equals(authentication.getName())){
-        uploadImageForAd(id,image);
-        }
+
+        uploadImageForAd(id, image);
+
+    }
+
+    /**
+     * метод возвращает true , если запрос поступает от собственника или админа.
+     *
+     * @param id
+     * @param authentication
+     */
+    public boolean isMainOrAdmin(Integer id, Authentication authentication) {
+        boolean admin = (userService.findByLogin(authentication.getName()).getRole()) == Role.ADMIN;
+        return (authentication.getName()).equals(findById(id.longValue()).getUser().getLogin()) || admin;
+
+
     }
 
 }
