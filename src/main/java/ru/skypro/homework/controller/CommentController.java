@@ -147,9 +147,11 @@ public class CommentController {
                                                  @PathVariable Integer commentId,
                                                  @RequestBody CreateOrUpdateComment createOrUpdateComment,
                                                  Authentication authentication) {
-        // если объявление найдено и коммент найден, ОК
-        // если не авторизирован, не ок
-        // прописать ошибки Forbidden и Not found
-        return ResponseEntity.ok().build();
+
+        if (commentService.isMainOrAdmin(adId,authentication))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if ((commentService.changeComment(commentId,createOrUpdateComment))==null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.ok(commentService.changeComment(commentId,createOrUpdateComment));
     }
 }

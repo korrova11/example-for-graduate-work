@@ -61,5 +61,14 @@ public class CommentServiceImpl implements CommentService {
         boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
         return (authentication.getName()).equals(findById(id).get().getUserEntity().getLogin()) || admin;
     }
+    public Comment changeComment(Integer id,CreateOrUpdateComment text){
+        Optional<CommentEntity> comment = findById(id);
+        if (comment.isEmpty()) return null;
+        comment.get().setText(text.getText());
+
+        return CommentMapper.INSTANCE
+                .commentEntityToComment(commentRepository.save(comment.get()));
+
+    }
 
 }
