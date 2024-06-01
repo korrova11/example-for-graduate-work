@@ -57,12 +57,12 @@ public class UserController {
 
 
     @PostMapping("/set_password")
-    public void setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
+    public ResponseEntity setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
 
         if ((authService.changePassword(authentication.getName(), newPassword)))
-            ResponseEntity.ok().build();
+            return ResponseEntity.ok().build();
         else
-            ResponseEntity.status(HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @Operation(
@@ -125,12 +125,12 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser) {
-        if (updateUser.getFirstName().isBlank()) {
-            return ResponseEntity.ok(UpdateUser.builder().build());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser
+            , Authentication authentication) {
+        if (userService.changeUser(updateUser, authentication)) {
+            return ResponseEntity.ok(updateUser);
         }
+        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
@@ -147,13 +147,10 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateUserImage(@RequestParam MultipartFile image) throws IOException {
-        //  String url = String.valueOf(image.getResource());
-        if (1 == 1) {
-            ResponseEntity.ok().build();
-        } else {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity updateUserImage(@RequestParam MultipartFile image,
+                                Authentication authentication) throws IOException {
+        userService.uploadImageForUser(authentication.getName(),image);
+        return ResponseEntity.ok().build();
 
     }
 
