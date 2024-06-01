@@ -83,10 +83,10 @@ public class CommentController {
     @PostMapping("{id}/comments")
     public ResponseEntity<Comment> addComment(@PathVariable Integer id,@RequestBody CreateOrUpdateComment comment,
                                               Authentication authentication) {
-        if (comment.equals(comment)) {
-            return ResponseEntity.ok().build();
-        } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
-        return ResponseEntity.ok().build();
+        if (commentService.createOrUpdate(id,comment,authentication)==null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(commentService.createOrUpdate(id,comment,authentication));
     }
 
     @Operation(summary = "Удаление комментария",
@@ -112,12 +112,10 @@ public class CommentController {
 
     @DeleteMapping("{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Integer adId,
-                                           @PathVariable Integer commentId) { // добавить объявление
-        // если объявление найдено и коммент найден, ОК
-        // если не авторизирован, не ок
-        // прописать ошибки Forbidden и Not found
-        commentService.deleteComment(adId,commentId);
-        return ResponseEntity.ok().build();
+                                           @PathVariable Integer commentId,
+                                           Authentication authentication) {
+        return ResponseEntity.status(commentService
+                .deleteComment(adId,commentId,authentication)).build();
     }
 
     @Operation(summary = "Обновление комментария",
@@ -147,10 +145,13 @@ public class CommentController {
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
                                                  @PathVariable Integer commentId,
-                                                 @RequestBody CreateOrUpdateComment createOrUpdateComment) {
-        // если объявление найдено и коммент найден, ОК
-        // если не авторизирован, не ок
-        // прописать ошибки Forbidden и Not found
-        return ResponseEntity.ok().build();
+                                                 @RequestBody CreateOrUpdateComment createOrUpdateComment,
+                                                 Authentication authentication) {
+
+        if (commentService.isMainOrAdmin(adId,authentication))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if ((commentService.changeComment(commentId,createOrUpdateComment))==null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return ResponseEntity.ok(commentService.changeComment(commentId,createOrUpdateComment));
     }
 }

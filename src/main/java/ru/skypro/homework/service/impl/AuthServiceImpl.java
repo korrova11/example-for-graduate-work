@@ -6,9 +6,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.stereotype.Service;
+import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.entity.UserEntity;
+import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.AuthService;
 
+import java.util.Optional;
 
 
 @Service
@@ -18,8 +22,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsManager manager;
     private final PasswordEncoder encoder;
     private final UserServiceImpl userService;
-
-
+    private final UserRepository repository;
 
     @Override
     public boolean login(String userName, String password) {
@@ -43,9 +46,19 @@ public class AuthServiceImpl implements AuthService {
                         .roles(register.getRole().name())
                         .build());
 
-
-
         return true;
     }
+    public boolean changePassword(String login,NewPassword newPassword){
+        Optional<UserEntity> user = userService.findByLogin(login);
+        if (user.isEmpty()) return false;
+        if (!encoder.matches(newPassword.getCurrentPassword(), user.get().getPassword())) {
+            return false;
+        }
+        user.get().setPassword(encoder.encode(newPassword.getNewPassword()));
+        repository.save(user.get());
+        return true;
+
+    }
+
 
 }
