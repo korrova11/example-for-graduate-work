@@ -22,21 +22,10 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 @Transactional
 public class ImageServiceImpl {
 
-    private final UserServiceImpl userService;
-    private final AdServiceImpl adService;
+
     private final ImageEntityRepository repository;
 
-    public void uploadImageForUser(String login, MultipartFile image) throws IOException {
-        UserEntity user = userService.findByLogin(login);
-        Path filePath = uploadImage(user.getId(), image);
-        ImageEntity imageEntity = repository.findById(user.getImageEntity().getId()).orElse(new ImageEntity());
-        imageEntity.setFilePath(filePath.toString());
-        imageEntity.setFileSize(image.getSize());
-        imageEntity.setMediaType(image.getContentType());
-        imageEntity.setData(image.getBytes());
-        repository.save(imageEntity);
-        user.setImageEntity(imageEntity);
-    }
+
 
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
@@ -56,18 +45,6 @@ public class ImageServiceImpl {
             bis.transferTo(bos);
         }
         return filePath;
-    }
-    public void uploadImageForAd(Long id, MultipartFile image) throws IOException{
-        AdEntity ad = adService.findById(id);
-        Path filePath = uploadImage(id,image);
-        ImageEntity imageEntity = repository.findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
-        imageEntity.setFilePath(filePath.toString());
-        imageEntity.setFileSize(image.getSize());
-        imageEntity.setMediaType(image.getContentType());
-        imageEntity.setData(image.getBytes());
-        repository.save(imageEntity);
-        ad.setImageEntity(imageEntity);
-
     }
 
 }

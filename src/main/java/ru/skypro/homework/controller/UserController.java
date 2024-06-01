@@ -17,7 +17,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import ru.skypro.homework.service.AuthService;
+import ru.skypro.homework.service.impl.AuthServiceImpl;
 import ru.skypro.homework.service.impl.UserServiceImpl;
+
 import java.io.IOException;
 
 @Slf4j
@@ -27,6 +30,7 @@ import java.io.IOException;
 @RequestMapping("/users")
 public class UserController {
     private final UserServiceImpl userService;
+    private final AuthServiceImpl authService;
 
     @Operation(
             summary = "Обновление пароля",
@@ -53,14 +57,12 @@ public class UserController {
 
 
     @PostMapping("/set_password")
-    public void setPassword(@RequestBody NewPassword changePassword) {
-        if (!userService.validationPassword(changePassword)) {
-            ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } else if (userService.changePassword(changePassword)) {
+    public void setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
+
+        if ((authService.changePassword(authentication.getName(), newPassword)))
             ResponseEntity.ok().build();
-        } else {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        else
+            ResponseEntity.status(HttpStatus.FORBIDDEN);
     }
 
     @Operation(
@@ -93,11 +95,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getUser(Authentication authentication) {
 
-        if (1 == 1) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return ResponseEntity.ok(userService.getUser(authentication));
 
     }
 

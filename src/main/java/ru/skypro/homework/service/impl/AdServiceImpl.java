@@ -38,7 +38,7 @@ public class AdServiceImpl implements AdService {
             , Authentication authentication) throws IOException {
 
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
-        adEntity.setUser(userService.findByLogin(authentication.getName()));
+        adEntity.setUser(userService.findByLogin(authentication.getName()).get());
         repository.save(adEntity);
         uploadImageForAd(repository.save(adEntity).getId(), image);
 
@@ -48,20 +48,21 @@ public class AdServiceImpl implements AdService {
 
     public Optional<Ad> changeAd(Integer id, CreateOrUpdateAd properties
             , Authentication authentication) {
-        AdEntity adEntity = repository.findById(id.longValue()).orElseThrow();
-        if ((adEntity.getUser().getLogin()).equals(authentication.getName())) {
-            adEntity.setPrice(properties.getPrice());
-            adEntity.setDescription(properties.getDescription());
-            adEntity.setTitle(properties.getTitle());
-            return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity));
-        }
-        return Optional.empty();
+        Optional<AdEntity> adEntity = repository.findById(id.longValue());
+        if (adEntity.isEmpty()) return Optional.empty();
+
+        adEntity.get().setPrice(properties.getPrice());
+        adEntity.get().setDescription(properties.getDescription());
+        adEntity.get().setTitle(properties.getTitle());
+        return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity.get()));
+
+
     }
 
 
     public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
-        AdEntity ad = findById(id);
+        AdEntity ad = findById(id).get();
         Path filePath = Path.of("/image", ad + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
@@ -95,8 +96,8 @@ public class AdServiceImpl implements AdService {
     }
 
 
-    public AdEntity findById(Long id) {
-        return repository.findById(id).orElseThrow();
+    public Optional<AdEntity> findById(Long id) {
+        return repository.findById(id);
     }
 
     /**
@@ -120,6 +121,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод возвращает дто объекта AdEntity по id
+     *
      * @param id
      * @return
      */
@@ -152,8 +154,8 @@ public class AdServiceImpl implements AdService {
      * @param authentication
      */
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
-        boolean admin = (userService.findByLogin(authentication.getName()).getRole()) == Role.ADMIN;
-        return (authentication.getName()).equals(findById(id.longValue()).getUser().getLogin()) || admin;
+        boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
+        return (authentication.getName()).equals(findById(id.longValue()).get().getUser().getLogin()) || admin;
 
 
     }
