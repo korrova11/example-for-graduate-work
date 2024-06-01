@@ -31,7 +31,6 @@ import java.util.Optional;
 public class AdController {
 
     private final AdServiceImpl adService;
-    private final AuthService authService;
 
 
     @Operation(
@@ -61,7 +60,7 @@ public class AdController {
     public ResponseEntity<?> addAd(@RequestPart(name = "image") MultipartFile image,
                                    @RequestPart(name = "properties") CreateOrUpdateAd properties,
                                    Authentication authentication) throws IOException {
-        return new ResponseEntity<>(adService.addAd(image, properties,authentication), HttpStatus.CREATED);
+        return new ResponseEntity<>(adService.addAd(image, properties, authentication), HttpStatus.CREATED);
 
     }
 
@@ -83,9 +82,8 @@ public class AdController {
 
     @GetMapping()
     public ResponseEntity<?> getAllAds() {
-                          return ResponseEntity.ok(adService.getAll());
-               }
-
+        return ResponseEntity.ok(adService.getAll());
+    }
 
 
     @Operation(
@@ -112,12 +110,15 @@ public class AdController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> removeAd(@PathVariable Integer id, Authentication authentication) {
+        if (adService.isMainOrAdmin(id, authentication)) {
+            if (adService.deleteAd(id)) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
 
-        if (adService.deleteAd(id, authentication.getName())) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
+        } else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
     }
 
 
@@ -147,7 +148,11 @@ public class AdController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ExtendedAd> getAd(@PathVariable Integer id) {
-        return ResponseEntity.ok(adService.getById(id));
+        ExtendedAd ad = adService.getById(id);
+        if (ad == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else
+            return ResponseEntity.ok(ad);
 
     }
 
@@ -170,11 +175,12 @@ public class AdController {
     public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
                                         @RequestBody CreateOrUpdateAd createOrUpdateAd,
                                         Authentication authentication) {
-        Optional<Ad> ad = adService.changeAd(id,createOrUpdateAd,authentication);
-        if (ad.isPresent()){
-            return ResponseEntity.ok(ad.get());
-        }
-        else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (adService.isMainOrAdmin(id, authentication)) {
+            Optional<Ad> ad = adService.changeAd(id, createOrUpdateAd, authentication);
+            return ad.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        } else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+
     }
 
     @Operation(
@@ -225,11 +231,13 @@ public class AdController {
     )
     @PatchMapping(value = "/{id}/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> updateImage(@PathVariable Integer id,
-                                             @RequestBody MultipartFile image,
-                                             Authentication authentication) throws IOException {
-        adService.changeImageAd(id.longValue(),authentication,image);
-        return ResponseEntity.ok(Base64.encodeBase64URLSafeString(image.getBytes()));
-       // return ResponseEntity.ok(Arrays.toString(image.getBytes()));
+                                         @RequestBody MultipartFile image,
+                                         Authentication authentication) throws IOException {
+        if (adService.isMainOrAdmin(id, authentication)) {
+            adService.changeImageAd(id.longValue(), image);
+            return ResponseEntity.ok(Base64.encodeBase64URLSafeString(image.getBytes()));
+        } else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        // return ResponseEntity.ok(Arrays.toString(image.getBytes()));
     }
 
 
