@@ -26,7 +26,7 @@ public class UserEntity {
     private String firstName;
     private String lastName;
     private String phone;
-    @Enumerated(EnumType.STRING)
+    //@Enumerated(EnumType.STRING)
     private Role role;
     @JoinColumn(referencedColumnName = "id", name = "image_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
