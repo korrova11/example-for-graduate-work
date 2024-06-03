@@ -1,6 +1,8 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,7 @@ import ru.skypro.homework.repository.ImageEntityRepository;
 import ru.skypro.homework.repository.UserRepository;
 import ru.skypro.homework.service.UserService;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,8 +26,12 @@ import java.util.Optional;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
-@AllArgsConstructor
+
+@RequiredArgsConstructor
+@Transactional
 public class UserServiceImpl  {
+    @Value("${path.to.image.folder}")
+    private String avatarsDir;
     private final UserRepository repository;
     private final ImageEntityRepository imageEntityRepository;
 
@@ -58,7 +65,7 @@ public class UserServiceImpl  {
 
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
         UserEntity user = findByLogin(login).get();
-        Path filePath = Path.of("/image", user + "." + getExtensions(image.getOriginalFilename()));
+        Path filePath = Path.of(avatarsDir, user + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -69,7 +76,8 @@ public class UserServiceImpl  {
         ) {
             bis.transferTo(bos);
         }
-        ImageEntity imageEntity = imageEntityRepository.findById(user.getImageEntity().getId()).orElse(new ImageEntity());
+        //ImageEntity imageEntity = imageEntityRepository.findById(user.getImageEntity().getId()).orElse(new ImageEntity());
+        ImageEntity imageEntity = new ImageEntity();
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
