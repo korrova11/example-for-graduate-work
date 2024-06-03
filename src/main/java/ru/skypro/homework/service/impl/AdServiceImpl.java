@@ -18,6 +18,7 @@ import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.ImageEntityRepository;
 import ru.skypro.homework.service.AdService;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AdServiceImpl implements AdService {
     @Value("${path.to.photo.folder}")
     private String avatarsDir;
