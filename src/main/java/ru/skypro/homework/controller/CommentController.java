@@ -47,7 +47,7 @@ public class CommentController {
                     )},
             tags = "Комментарии"
     )
-    @GetMapping("{id}/comments")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<Comments> getComments(@PathVariable Integer id) {
        Optional<Comments> comments = commentService.getAllByAd(id.longValue());
        if (comments.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -60,7 +60,7 @@ public class CommentController {
             requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     content = @Content(
                             mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Comment.class)
+                            schema = @Schema(implementation = CreateOrUpdateComment.class)
                     )
             ),
             responses = {
@@ -80,7 +80,7 @@ public class CommentController {
                     )},
             tags = "Комментарии"
     )
-    @PostMapping("{id}/comments")
+    @PostMapping("/{id}/comments")
     public ResponseEntity<Comment> addComment(@PathVariable Integer id,@RequestBody CreateOrUpdateComment comment,
                                               Authentication authentication) {
         if (commentService.createOrUpdate(id,comment,authentication)==null) {

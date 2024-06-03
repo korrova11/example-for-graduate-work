@@ -2,6 +2,7 @@ package ru.skypro.homework.entity;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,6 +14,7 @@ import java.util.Date;
 @Data
 @Builder
 @Table(name = "comment")
+@ToString
 public class CommentEntity {
 
     @Id
@@ -30,7 +32,7 @@ public class CommentEntity {
     private UserEntity userEntity;
 
     @ManyToOne
-    @JoinColumn(name = "ads_id")
+    @JoinColumn(name = "ads_id",nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AdEntity ads;
 

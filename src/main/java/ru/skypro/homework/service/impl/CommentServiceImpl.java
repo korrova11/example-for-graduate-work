@@ -37,15 +37,16 @@ public class CommentServiceImpl implements CommentService {
     public Comment createOrUpdate(Integer id, CreateOrUpdateComment updateComment,
                                   Authentication authentication){
         Optional<AdEntity> adEntity = adService.findById(id.longValue());
-        if (adEntity.isEmpty()) return null;
+        if (adEntity.isEmpty()){ return null;}
         CommentEntity commentEntity = CommentMapper.INSTANCE
                 .createOrUpdateCommentToCommentEntity(updateComment);
         commentEntity.setCreatedAt(new Date());
         commentEntity.setUserEntity(userService.findByLogin(authentication.getName()).get());
         commentEntity.setAds(adEntity.get());
+        CommentEntity commentEntity1 = commentRepository.save(commentEntity);
 
         Comment comment = CommentMapper.INSTANCE
-                .commentEntityToComment(commentRepository.save(commentEntity));
+                .commentEntityToComment(commentEntity1);
         return comment;
     }
     public HttpStatus deleteComment(Integer idAd, Integer idComment, Authentication authentication){

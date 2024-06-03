@@ -1,9 +1,6 @@
 package ru.skypro.homework.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.Role;
 
@@ -15,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
+@ToString
 @Table(name = "users")
 public class UserEntity {
     @GeneratedValue

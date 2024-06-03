@@ -1,6 +1,8 @@
 package ru.skypro.homework.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,10 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AdServiceImpl implements AdService {
+    @Value("${path.to.photo.folder}")
+    private String avatarsDir;
     private final AdRepository repository;
     //private final ImageServiceImpl imageService;
     private final ImageEntityRepository imageEntityRepository;
@@ -38,11 +42,12 @@ public class AdServiceImpl implements AdService {
             , Authentication authentication) throws IOException {
 
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
+        adEntity.setId(1L);
         adEntity.setUser(userService.findByLogin(authentication.getName()).get());
-        repository.save(adEntity);
-        uploadImageForAd(repository.save(adEntity).getId(), image);
+        AdEntity adEntity1 =repository.save(adEntity);
+        uploadImageForAd(adEntity1.getId(), image);
 
-        return AdMapper.INSTANCE.adEntityToAd(adEntity);
+        return AdMapper.INSTANCE.adEntityToAd(adEntity1);
 
     }
 
@@ -59,11 +64,17 @@ public class AdServiceImpl implements AdService {
 
     }
 
+    /**
+     * метод загружает картиинку объявления
+     * @param id
+     * @param image
+     * @throws IOException
+     */
 
     public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
         AdEntity ad = findById(id).get();
-        Path filePath = Path.of("/image", ad + "." + getExtensions(image.getOriginalFilename()));
+        Path filePath = Path.of(avatarsDir, ad + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -74,8 +85,9 @@ public class AdServiceImpl implements AdService {
         ) {
             bis.transferTo(bos);
         }
-        ImageEntity imageEntity = imageEntityRepository
-                .findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
+        //ImageEntity imageEntity = imageEntityRepository
+         //       .findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
+        ImageEntity imageEntity = new ImageEntity();
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
@@ -88,6 +100,11 @@ public class AdServiceImpl implements AdService {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
+    /**
+     * метод возвращает все объявления
+     * @return
+     */
+
 
     public Ads getAll() {
         List<Ad> list = repository.findAll().stream()
@@ -95,7 +112,11 @@ public class AdServiceImpl implements AdService {
         return new Ads(list.size(), list);
     }
 
-
+    /**
+     * метод возвращает Optional объявления по Id
+     * @param id
+     * @return
+     */
     public Optional<AdEntity> findById(Long id) {
         return repository.findById(id);
     }
@@ -133,6 +154,11 @@ public class AdServiceImpl implements AdService {
         } else return null;
     }
 
+    /**
+     * метод возвращает все объявления владельца
+     * @param authentication
+     * @return
+     */
     public Ads getAdsByUser(Authentication authentication) {
         List<Ad> list = repository.findAll().stream()
                 .filter(adEntity -> (adEntity.getUser().getLogin()).equals(authentication.getName()))
@@ -140,6 +166,12 @@ public class AdServiceImpl implements AdService {
         return new Ads(list.size(), list);
     }
 
+    /**
+     * метод меняет картинку объявления
+     * @param id
+     * @param image
+     * @throws IOException
+     */
     public void changeImageAd(Long id, MultipartFile image)
             throws IOException {
 
