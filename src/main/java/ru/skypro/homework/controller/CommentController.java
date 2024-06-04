@@ -16,9 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
-
 import ru.skypro.homework.service.impl.CommentServiceImpl;
-
 import javax.validation.Valid;
 import java.util.Optional;
 

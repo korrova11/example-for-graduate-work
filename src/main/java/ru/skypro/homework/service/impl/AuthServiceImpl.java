@@ -42,6 +42,12 @@ public class AuthServiceImpl implements AuthService {
         return true;
     }
 
+    /**
+     * метод формирует сущность UserEntity
+     * и вносит в БД нового пользовтеля
+     * @param register
+     * @return
+     */
     @Override
     public boolean  register(Register register) {
 
@@ -52,6 +58,13 @@ public class AuthServiceImpl implements AuthService {
         repository.save(userEntity);
         return true;
     }
+
+    /**
+     * метод меняет пароль
+     * @param login
+     * @param newPassword
+     * @return
+     */
     public boolean changePassword(String login,NewPassword newPassword){
         Optional<UserEntity> user = userService.findByLogin(login);
         if (user.isEmpty()) return false;

@@ -6,7 +6,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.UserEntity;
-
 import java.util.Collection;
 import java.util.Collections;
 

@@ -1,17 +1,13 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.webjars.NotFoundException;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.ImageEntity;
-import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mappers.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.CommentRepository;
@@ -35,11 +31,19 @@ public class AdServiceImpl implements AdService {
     @Value("${path.to.photo.folder}")
     private String avatarsDir;
     private final AdRepository repository;
-    //private final ImageServiceImpl imageService;
     private final ImageEntityRepository imageEntityRepository;
     private final UserServiceImpl userService;
     private final CommentRepository commentRepository;
 
+    /**
+     * метод добавляет объявление и загружает картинку для этого объявления
+     *
+     * @param image
+     * @param properties
+     * @param authentication
+     * @return возвращает сущность Ad (dto)
+     * @throws IOException
+     */
     public Ad addAd(MultipartFile image, CreateOrUpdateAd properties
             , Authentication authentication) throws IOException {
 
@@ -52,6 +56,15 @@ public class AdServiceImpl implements AdService {
         return AdMapper.INSTANCE.adEntityToAd(adEntity1);
 
     }
+
+    /**
+     * метод меняет поля объявления
+     *
+     * @param id
+     * @param properties
+     * @param authentication
+     * @return возвращает Optional cущности Ad ( dto)
+     */
 
     public Optional<Ad> changeAd(Integer id, CreateOrUpdateAd properties
             , Authentication authentication) {

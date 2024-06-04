@@ -1,6 +1,6 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.AllArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -15,7 +15,6 @@ import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mappers.UserMapper;
 import ru.skypro.homework.repository.ImageEntityRepository;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.UserService;
 
 import javax.transaction.Transactional;
 import java.io.*;
@@ -26,10 +25,9 @@ import java.util.Optional;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
-
 @RequiredArgsConstructor
 @Transactional
-public class UserServiceImpl  {
+public class UserServiceImpl {
     @Value("${path.to.image.folder}")
     private String avatarsDir;
     private final UserRepository repository;
@@ -39,29 +37,51 @@ public class UserServiceImpl  {
         return true;
     }
 
-    public UserEntity findById(Long id){
+    public UserEntity findById(Long id) {
         return repository.findById(id).orElseThrow();
     }
+
     public User getUserDto() {
         return null;
     }
-    public Optional<UserEntity> findByLogin(String login){
+
+    /**
+     * метод находит в БД пользователя по его логину
+     *
+     * @param login
+     * @return метод возвращает Optional UserEntity
+     */
+    public Optional<UserEntity> findByLogin(String login) {
         return repository.findByLogin(login);
     }
-    public boolean adUser(Register register){
+
+    public boolean adUser(Register register) {
         UserEntity userEntity = UserMapper.INSTANCE.registerToUserEntity(register);
-        if((repository.save(userEntity).getLogin()).equals(register.getUsername())) {
+        if ((repository.save(userEntity).getLogin()).equals(register.getUsername())) {
             return true;
-        }
-        else return false;
+        } else return false;
 
     }
-    public User getUser(Authentication authentication){
+
+    /**
+     * метод возвращает из БД дто пользователя
+     *
+     * @param authentication
+     * @return
+     */
+    public User getUser(Authentication authentication) {
         if (findByLogin(authentication.getName()).isEmpty()) return null;
         else return UserMapper.INSTANCE
                 .userEntityToUser(findByLogin(authentication.getName()).get());
     }
 
+    /**
+     * метод загружает аватар пользователя
+     *
+     * @param login
+     * @param image
+     * @throws IOException
+     */
 
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
         UserEntity user = findByLogin(login).get();
@@ -85,11 +105,20 @@ public class UserServiceImpl  {
         imageEntityRepository.save(imageEntity);
         user.setImageEntity(imageEntity);
     }
+
     private String getExtensions(String fileName) {
 
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
-    public boolean changeUser(UpdateUser updateUser, Authentication authentication){
+
+    /**
+     * метод меняет данные пользователя
+     *
+     * @param updateUser
+     * @param authentication
+     * @return
+     */
+    public boolean changeUser(UpdateUser updateUser, Authentication authentication) {
         UserEntity userEntity = repository.findByLogin(authentication.getName()).get();
         userEntity.setPhone(updateUser.getPhone());
         userEntity.setFirstName(updateUser.getFirstName());
