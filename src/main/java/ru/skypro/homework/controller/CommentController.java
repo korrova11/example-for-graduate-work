@@ -19,6 +19,7 @@ import ru.skypro.homework.dto.CreateOrUpdateComment;
 
 import ru.skypro.homework.service.impl.CommentServiceImpl;
 
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -95,7 +96,8 @@ public class CommentController {
             tags = "Комментарии"
     )
     @PostMapping("/{id}/comments")
-    public ResponseEntity<Comment> addComment(@PathVariable Integer id,@RequestBody CreateOrUpdateComment comment,
+    public ResponseEntity<Comment> addComment(@PathVariable Integer id,
+                                              @Valid @RequestBody CreateOrUpdateComment comment,
                                               Authentication authentication) {
         if (commentService.createOrUpdate(id,comment,authentication)==null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
