@@ -27,8 +27,6 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     UserEntity registerToUserEntity(Register register);
 
-    UpdateUser userEntityToUpdateUser(UserEntity user);
-
 
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "login", ignore = true)

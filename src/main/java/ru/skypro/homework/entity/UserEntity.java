@@ -1,11 +1,9 @@
 package ru.skypro.homework.entity;
 
 import lombok.*;
-import ru.skypro.homework.dto.Image;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor

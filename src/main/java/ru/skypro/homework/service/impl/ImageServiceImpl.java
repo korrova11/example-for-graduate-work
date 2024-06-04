@@ -1,20 +1,16 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.ImageEntity;
-import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.ImageEntityRepository;
 
 import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 

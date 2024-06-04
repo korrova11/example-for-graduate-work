@@ -1,10 +1,11 @@
 package ru.skypro.homework.dto;
 
+import lombok.Builder;
 import lombok.Data;
-
 import javax.validation.constraints.Size;
 
 @Data
+@Builder
 public class Login {
     @Size(min = 8, max = 16)
     private String password;
