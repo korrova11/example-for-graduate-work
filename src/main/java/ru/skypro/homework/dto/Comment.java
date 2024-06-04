@@ -4,13 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import lombok.Builder;
-
-import java.time.LocalDateTime;
-import java.util.Date;
-
 @Data
 @Builder
+
 public class Comment {
 
     private Integer author;

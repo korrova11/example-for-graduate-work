@@ -3,7 +3,6 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.impl.AuthServiceImpl;
 import ru.skypro.homework.service.impl.UserServiceImpl;
 
@@ -129,8 +127,7 @@ public class UserController {
             , Authentication authentication) {
         if (userService.changeUser(updateUser, authentication)) {
             return ResponseEntity.ok(updateUser);
-        }
-        else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
@@ -148,12 +145,11 @@ public class UserController {
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity updateUserImage(@RequestParam MultipartFile image,
-                                Authentication authentication) throws IOException {
-        userService.uploadImageForUser(authentication.getName(),image);
+                                          Authentication authentication) throws IOException {
+        userService.uploadImageForUser(authentication.getName(), image);
         return ResponseEntity.ok().build();
 
     }
-
 
 }
 

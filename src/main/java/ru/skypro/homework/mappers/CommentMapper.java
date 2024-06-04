@@ -24,10 +24,6 @@ public abstract class  CommentMapper {
 
     public abstract Comment commentEntityToComment(CommentEntity commentEntity);
 
-    /*@Mapping(source = "pk", target = "id")
-    public abstract CommentEntity commentToCommentEntity(Comment comment);
-
-    public abstract CreateOrUpdateComment commentEntityToCreateOrUpdateComment(CommentEntity commentEntity);*/
 
     @Mapping(target = "userEntity", ignore = true)
     @Mapping(target = "id", ignore = true)
