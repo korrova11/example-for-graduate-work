@@ -18,9 +18,12 @@
 * Этап II. Написание сущностей, репозиториев, мапперов.
 * Этап III. Написание сервисов.
 
+---
 
 ## Название професии, потока и группы:
 Профессия java - разработчик, потока 15, команда - Кадры(3)
+
+---
 
 ## Участники проекта:
 + Глыва Виталий
@@ -28,6 +31,7 @@
 + Потапов Владимир
 
 ---
+
 ### Технологии и библиотеки:
 
 Проект использует следующие технологии и библиотеки:
@@ -40,6 +44,4 @@
 ![Hibernate](https://img.shields.io/badge/Hibernate-59666C?style=for-the-badge&logo=Hibernate&logoColor=white)
 ![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
-
-
 
