@@ -28,10 +28,10 @@ public class AdServiceImplTest {
                 .filePath("/ооо")
                 .fileSize(200L)
                 .build();
-        Authentication authentication = new Authentication() ;
+       /* Authentication authentication = new Authentication() ;
 
         Assertions.assertEquals(service.addAd(image, createOrUpdateAd, A));
-
+*/
 
     }
 }

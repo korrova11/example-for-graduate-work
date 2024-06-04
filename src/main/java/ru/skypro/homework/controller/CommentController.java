@@ -1,6 +1,8 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -57,11 +59,23 @@ public class CommentController {
 
     @Operation(
             summary = "Добавление комментария к объявлению",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = CreateOrUpdateComment.class)
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
                     )
+            ),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = {@Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = CreateOrUpdateComment.class
+                            )
+                    )
+                    }
             ),
             responses = {
                     @ApiResponse(
