@@ -76,8 +76,8 @@ public class UserServiceImpl  {
         ) {
             bis.transferTo(bos);
         }
-        //ImageEntity imageEntity = imageEntityRepository.findById(user.getImageEntity().getId()).orElse(new ImageEntity());
-        ImageEntity imageEntity = new ImageEntity();
+        ImageEntity imageEntity = Optional.ofNullable(user.getImageEntity())
+                .orElse(new ImageEntity());
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
