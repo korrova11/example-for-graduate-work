@@ -46,7 +46,7 @@ public class AdServiceImpl implements AdService {
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
         adEntity.setId(1L);
         adEntity.setUser(userService.findByLogin(authentication.getName()).get());
-        AdEntity adEntity1 =repository.save(adEntity);
+        AdEntity adEntity1 = repository.save(adEntity);
         uploadImageForAd(adEntity1.getId(), image);
 
         return AdMapper.INSTANCE.adEntityToAd(adEntity1);
@@ -68,6 +68,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод загружает картиинку объявления
+     *
      * @param id
      * @param image
      * @throws IOException
@@ -87,9 +88,10 @@ public class AdServiceImpl implements AdService {
         ) {
             bis.transferTo(bos);
         }
-        //ImageEntity imageEntity = imageEntityRepository
-         //       .findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
-        ImageEntity imageEntity = new ImageEntity();
+
+        ImageEntity imageEntity = Optional.ofNullable(ad.getImageEntity())
+                .orElse(new ImageEntity());
+
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
@@ -104,6 +106,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод возвращает все объявления
+     *
      * @return
      */
 
@@ -116,6 +119,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод возвращает Optional объявления по Id
+     *
      * @param id
      * @return
      */
@@ -158,6 +162,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод возвращает все объявления владельца
+     *
      * @param authentication
      * @return
      */
@@ -170,6 +175,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод меняет картинку объявления
+     *
      * @param id
      * @param image
      * @throws IOException
