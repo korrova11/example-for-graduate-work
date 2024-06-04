@@ -65,7 +65,7 @@ public class UserServiceImpl  {
 
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
         UserEntity user = findByLogin(login).get();
-        Path filePath = Path.of(avatarsDir, user + "." + getExtensions(image.getOriginalFilename()));
+        Path filePath = Path.of(avatarsDir, user.getLogin() + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (

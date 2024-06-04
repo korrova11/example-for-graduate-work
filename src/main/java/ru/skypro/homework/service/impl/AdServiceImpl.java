@@ -76,7 +76,7 @@ public class AdServiceImpl implements AdService {
     public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
         AdEntity ad = findById(id).get();
-        Path filePath = Path.of(avatarsDir, ad + "." + getExtensions(image.getOriginalFilename()));
+        Path filePath = Path.of(avatarsDir, ad.getId() + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
