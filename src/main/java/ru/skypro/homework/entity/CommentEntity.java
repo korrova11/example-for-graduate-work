@@ -1,8 +1,6 @@
 package ru.skypro.homework.entity;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -15,6 +13,8 @@ import java.util.Date;
 @Builder
 @Table(name = "comment")
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentEntity {
 
     @Id
