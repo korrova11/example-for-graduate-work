@@ -164,7 +164,7 @@ public class CommentController {
                                                  @RequestBody CreateOrUpdateComment createOrUpdateComment,
                                                  Authentication authentication) {
 
-        if (commentService.isMainOrAdmin(adId,authentication))
+        if (!commentService.isMainOrAdmin(commentId,authentication))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         if ((commentService.changeComment(commentId,createOrUpdateComment))==null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

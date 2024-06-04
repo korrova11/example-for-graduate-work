@@ -25,19 +25,23 @@ public class CommentServiceImpl implements CommentService {
     CommentRepository commentRepository;
     UserServiceImpl userService;
     AdServiceImpl adService;
-    public Optional<Comments> getAllByAd(Long id){
+
+    public Optional<Comments> getAllByAd(Long id) {
         List<Comment> comments = commentRepository.findAll().stream()
-                .filter(commentEntity -> commentEntity.getAds().getId()==id)
+                .filter(commentEntity -> commentEntity.getAds().getId() == id)
                 .map(commentEntity -> CommentMapper.INSTANCE.commentEntityToComment(commentEntity))
                 .collect(Collectors.toList());
 
         return Optional.of(new Comments(comments.size(), comments));
 
     }
+
     public Comment createOrUpdate(Integer id, CreateOrUpdateComment updateComment,
-                                  Authentication authentication){
+                                  Authentication authentication) {
         Optional<AdEntity> adEntity = adService.findById(id.longValue());
-        if (adEntity.isEmpty()){ return null;}
+        if (adEntity.isEmpty()) {
+            return null;
+        }
         CommentEntity commentEntity = CommentMapper.INSTANCE
                 .createOrUpdateCommentToCommentEntity(updateComment);
         commentEntity.setCreatedAt(new Date());
@@ -49,20 +53,26 @@ public class CommentServiceImpl implements CommentService {
                 .commentEntityToComment(commentEntity1);
         return comment;
     }
-    public HttpStatus deleteComment(Integer idAd, Integer idComment, Authentication authentication){
-         if(isMainOrAdmin(idComment,authentication)) return HttpStatus.FORBIDDEN;
-         if(findById(idComment).isEmpty()) return HttpStatus.NOT_FOUND;
+
+    public HttpStatus deleteComment(Integer idAd, Integer idComment, Authentication authentication) {
+        if (!isMainOrAdmin(idComment, authentication)) return HttpStatus.FORBIDDEN;
+        if (findById(idComment).isEmpty()) return HttpStatus.NOT_FOUND;
         commentRepository.deleteById(idComment);
         return HttpStatus.OK;
     }
-    public Optional<CommentEntity> findById(Integer id){
+
+    public Optional<CommentEntity> findById(Integer id) {
         return commentRepository.findById(id);
     }
+
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
         boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
-        return (authentication.getName()).equals(findById(id).get().getUserEntity().getLogin()) || admin;
+        String login = findById(id).get().getUserEntity().getLogin();
+        String loginUser = authentication.getName();
+        return ((loginUser).equals(login)) || admin;
     }
-    public Comment changeComment(Integer id,CreateOrUpdateComment text){
+
+    public Comment changeComment(Integer id, CreateOrUpdateComment text) {
         Optional<CommentEntity> comment = findById(id);
         if (comment.isEmpty()) return null;
         comment.get().setText(text.getText());
