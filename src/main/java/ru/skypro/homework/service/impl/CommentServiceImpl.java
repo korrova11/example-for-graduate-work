@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setCreatedAt(new Date());
         commentEntity.setUserEntity(userService.findByLogin(authentication.getName()).get());
         commentEntity.setAds(adEntity.get());
-        commentRepository.save(commentEntity);
+
         return CommentMapper.INSTANCE
                 .commentEntityToComment(commentRepository.save(commentEntity));
 
