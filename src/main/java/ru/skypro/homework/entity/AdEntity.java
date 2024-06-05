@@ -29,7 +29,7 @@ public class AdEntity {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ImageEntity imageEntity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user;
