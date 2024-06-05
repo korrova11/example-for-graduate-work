@@ -27,15 +27,7 @@ public class ImageServiceImpl {
 
 
 
-    public byte[] getImage(Integer id) {
-        Optional<ImageEntity> imageEntityOptional = repository.findById(id.longValue());
-        if (imageEntityOptional.isEmpty()) {
-            return null;
-        }
-        ImageEntity imageEntity = imageEntityOptional.get();
-        byte[] res = getImage(imageEntity.getName(), photoDir);
-        return res;
-    }
+
 
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
