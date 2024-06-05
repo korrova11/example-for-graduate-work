@@ -12,15 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.webjars.NotFoundException;
 import ru.skypro.homework.dto.*;
-import ru.skypro.homework.service.AdService;
-import ru.skypro.homework.service.AuthService;
 import ru.skypro.homework.service.impl.AdServiceImpl;
 
 import java.io.IOException;
-import java.util.Arrays;
-
 import java.util.Optional;
 
 @Slf4j
@@ -237,8 +232,7 @@ public class AdController {
             adService.changeImageAd(id.longValue(), image);
             return ResponseEntity.ok(Base64.encodeBase64URLSafeString(image.getBytes()));
         } else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        // return ResponseEntity.ok(Arrays.toString(image.getBytes()));
-    }
 
+    }
 
 }

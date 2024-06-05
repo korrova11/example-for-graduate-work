@@ -1,18 +1,19 @@
 package ru.skypro.homework.entity;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
 @Data
 @Builder
 @Table(name = "comment")
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 public class CommentEntity {
 
     @Id
@@ -25,11 +26,11 @@ public class CommentEntity {
     @Column
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "userEntity_id")
     private UserEntity userEntity;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ads_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AdEntity ads;

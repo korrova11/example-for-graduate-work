@@ -1,6 +1,8 @@
 package ru.skypro.homework.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,9 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.skypro.homework.dto.Comment;
 import ru.skypro.homework.dto.Comments;
 import ru.skypro.homework.dto.CreateOrUpdateComment;
-
 import ru.skypro.homework.service.impl.CommentServiceImpl;
-
+import javax.validation.Valid;
 import java.util.Optional;
 
 
@@ -47,7 +48,7 @@ public class CommentController {
                     )},
             tags = "Комментарии"
     )
-    @GetMapping("{id}/comments")
+    @GetMapping("/{id}/comments")
     public ResponseEntity<Comments> getComments(@PathVariable Integer id) {
        Optional<Comments> comments = commentService.getAllByAd(id.longValue());
        if (comments.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -57,11 +58,23 @@ public class CommentController {
 
     @Operation(
             summary = "Добавление комментария к объявлению",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    content = @Content(
-                            mediaType = MediaType.APPLICATION_JSON_VALUE,
-                            schema = @Schema(implementation = Comment.class)
+            parameters = @Parameter(
+                    name = "id",
+                    in = ParameterIn.PATH,
+                    required = true,
+                    schema = @Schema(
+                            type = "integer",
+                            format = "int32"
                     )
+            ),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    content = {@Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(
+                                    implementation = CreateOrUpdateComment.class
+                            )
+                    )
+                    }
             ),
             responses = {
                     @ApiResponse(
@@ -80,13 +93,15 @@ public class CommentController {
                     )},
             tags = "Комментарии"
     )
-    @PostMapping("{id}/comments")
-    public ResponseEntity<Comment> addComment(@PathVariable Integer id,@RequestBody CreateOrUpdateComment comment,
+    @PostMapping("/{id}/comments")
+    public ResponseEntity<Comment> addComment(@PathVariable Integer id,
+                                              @Valid @RequestBody CreateOrUpdateComment comment,
                                               Authentication authentication) {
-        if (comment.equals(comment)) {
-            return ResponseEntity.ok().build();
-        } // если не найден в БД вернуть 404, если не авторизирован вернуть 403.
-        return ResponseEntity.ok().build();
+        Optional<Comment> comment1 = commentService.createOrUpdate(id,comment,authentication);
+        if (comment1.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(comment1.get());
     }
 
     @Operation(summary = "Удаление комментария",
@@ -112,12 +127,10 @@ public class CommentController {
 
     @DeleteMapping("{adId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Integer adId,
-                                           @PathVariable Integer commentId) { // добавить объявление
-        // если объявление найдено и коммент найден, ОК
-        // если не авторизирован, не ок
-        // прописать ошибки Forbidden и Not found
-        commentService.deleteComment(adId,commentId);
-        return ResponseEntity.ok().build();
+                                           @PathVariable Integer commentId,
+                                           Authentication authentication) {
+        return ResponseEntity.status(commentService
+                .deleteComment(adId,commentId,authentication)).build();
     }
 
     @Operation(summary = "Обновление комментария",
@@ -147,10 +160,14 @@ public class CommentController {
     @PatchMapping("{adId}/comments/{commentId}")
     public ResponseEntity<Comment> updateComment(@PathVariable Integer adId,
                                                  @PathVariable Integer commentId,
-                                                 @RequestBody CreateOrUpdateComment createOrUpdateComment) {
-        // если объявление найдено и коммент найден, ОК
-        // если не авторизирован, не ок
-        // прописать ошибки Forbidden и Not found
-        return ResponseEntity.ok().build();
+                                                 @RequestBody CreateOrUpdateComment createOrUpdateComment,
+                                                 Authentication authentication) {
+
+        if (!commentService.isMainOrAdmin(commentId,authentication))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        Optional<Comment> comment = commentService.changeComment(commentId,createOrUpdateComment);
+        if (comment.isEmpty())
+        {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();};
+        return ResponseEntity.ok(comment.get());
     }
 }

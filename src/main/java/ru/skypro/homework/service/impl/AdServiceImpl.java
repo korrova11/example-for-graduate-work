@@ -1,21 +1,20 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import org.webjars.NotFoundException;
 import ru.skypro.homework.dto.*;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.ImageEntity;
-import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mappers.AdMapper;
 import ru.skypro.homework.repository.AdRepository;
 import ru.skypro.homework.repository.CommentRepository;
 import ru.skypro.homework.repository.ImageEntityRepository;
 import ru.skypro.homework.service.AdService;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,43 +25,72 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Transactional
 public class AdServiceImpl implements AdService {
+    @Value("${path.to.photo.folder}")
+    private String avatarsDir;
     private final AdRepository repository;
-    //private final ImageServiceImpl imageService;
     private final ImageEntityRepository imageEntityRepository;
     private final UserServiceImpl userService;
     private final CommentRepository commentRepository;
 
+    /**
+     * метод добавляет объявление и загружает картинку для этого объявления
+     *
+     * @param image
+     * @param properties
+     * @param authentication
+     * @return возвращает сущность Ad (dto)
+     * @throws IOException
+     */
     public Ad addAd(MultipartFile image, CreateOrUpdateAd properties
             , Authentication authentication) throws IOException {
 
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
-        adEntity.setUser(userService.findByLogin(authentication.getName()));
-        repository.save(adEntity);
-        uploadImageForAd(repository.save(adEntity).getId(), image);
+        adEntity.setId(1L);
+        adEntity.setUser(userService.findByLogin(authentication.getName()).get());
+        AdEntity adEntity1 = repository.save(adEntity);
+        uploadImageForAd(adEntity1.getId(), image);
 
-        return AdMapper.INSTANCE.adEntityToAd(adEntity);
+        return AdMapper.INSTANCE.adEntityToAd(adEntity1);
 
     }
+
+    /**
+     * метод меняет поля объявления
+     *
+     * @param id
+     * @param properties
+     * @param authentication
+     * @return возвращает Optional cущности Ad ( dto)
+     */
 
     public Optional<Ad> changeAd(Integer id, CreateOrUpdateAd properties
             , Authentication authentication) {
-        AdEntity adEntity = repository.findById(id.longValue()).orElseThrow();
-        if ((adEntity.getUser().getLogin()).equals(authentication.getName())) {
-            adEntity.setPrice(properties.getPrice());
-            adEntity.setDescription(properties.getDescription());
-            adEntity.setTitle(properties.getTitle());
-            return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity));
-        }
-        return Optional.empty();
+        Optional<AdEntity> adEntity = repository.findById(id.longValue());
+        if (adEntity.isEmpty()) return Optional.empty();
+
+        adEntity.get().setPrice(properties.getPrice());
+        adEntity.get().setDescription(properties.getDescription());
+        adEntity.get().setTitle(properties.getTitle());
+        return Optional.of(AdMapper.INSTANCE.adEntityToAd(adEntity.get()));
+
+
     }
 
+    /**
+     * метод загружает картиинку объявления
+     *
+     * @param id
+     * @param image
+     * @throws IOException
+     */
 
     public void uploadImageForAd(Long id, MultipartFile image) throws IOException {
 
-        AdEntity ad = findById(id);
-        Path filePath = Path.of("/image", ad + "." + getExtensions(image.getOriginalFilename()));
+        AdEntity ad = findById(id).get();
+        Path filePath = Path.of(avatarsDir, ad.getId() + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -73,8 +101,10 @@ public class AdServiceImpl implements AdService {
         ) {
             bis.transferTo(bos);
         }
-        ImageEntity imageEntity = imageEntityRepository
-                .findById(ad.getImageEntity().getId()).orElse(new ImageEntity());
+
+        ImageEntity imageEntity = Optional.ofNullable(ad.getImageEntity())
+                .orElse(new ImageEntity());
+
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
@@ -87,6 +117,12 @@ public class AdServiceImpl implements AdService {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
+    /**
+     * метод возвращает все объявления
+     *
+     * @return
+     */
+
 
     public Ads getAll() {
         List<Ad> list = repository.findAll().stream()
@@ -94,9 +130,14 @@ public class AdServiceImpl implements AdService {
         return new Ads(list.size(), list);
     }
 
-
-    public AdEntity findById(Long id) {
-        return repository.findById(id).orElseThrow();
+    /**
+     * метод возвращает Optional объявления по Id
+     *
+     * @param id
+     * @return
+     */
+    public Optional<AdEntity> findById(Long id) {
+        return repository.findById(id);
     }
 
     /**
@@ -111,8 +152,13 @@ public class AdServiceImpl implements AdService {
         if (adEntity.isEmpty()) {
             return false;
         } else {
+            AdEntity ad = adEntity.get();
             repository.getReferenceById(id.longValue()).getComments()
                     .forEach(commentRepository::delete);
+             if (Optional.ofNullable(ad.getImageEntity().getId()).isPresent()){
+                 imageEntityRepository.delete(ad.getImageEntity());
+             }
+
             repository.deleteById(id.longValue());
             return true;
         }
@@ -120,6 +166,7 @@ public class AdServiceImpl implements AdService {
 
     /**
      * метод возвращает дто объекта AdEntity по id
+     *
      * @param id
      * @return
      */
@@ -131,6 +178,12 @@ public class AdServiceImpl implements AdService {
         } else return null;
     }
 
+    /**
+     * метод возвращает все объявления владельца
+     *
+     * @param authentication
+     * @return
+     */
     public Ads getAdsByUser(Authentication authentication) {
         List<Ad> list = repository.findAll().stream()
                 .filter(adEntity -> (adEntity.getUser().getLogin()).equals(authentication.getName()))
@@ -138,6 +191,13 @@ public class AdServiceImpl implements AdService {
         return new Ads(list.size(), list);
     }
 
+    /**
+     * метод меняет картинку объявления
+     *
+     * @param id
+     * @param image
+     * @throws IOException
+     */
     public void changeImageAd(Long id, MultipartFile image)
             throws IOException {
 
@@ -152,8 +212,8 @@ public class AdServiceImpl implements AdService {
      * @param authentication
      */
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
-        boolean admin = (userService.findByLogin(authentication.getName()).getRole()) == Role.ADMIN;
-        return (authentication.getName()).equals(findById(id.longValue()).getUser().getLogin()) || admin;
+        boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
+        return (authentication.getName()).equals(findById(id.longValue()).get().getUser().getLogin()) || admin;
 
 
     }

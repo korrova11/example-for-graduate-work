@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Pattern;
 
 @NoArgsConstructor
@@ -21,6 +23,5 @@ public class User {
     @Pattern(regexp = ("\\+7\\s?\\(?\\d{3}\\)?\\s?\\d{3}-?\\d{2}-?\\d{2}"))
     private String phone;
     private Role role;
-    //@Schema( type = "string")
     private String image;
 }

@@ -1,9 +1,6 @@
 package ru.skypro.homework.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -16,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Data
+@ToString
 public class AdEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

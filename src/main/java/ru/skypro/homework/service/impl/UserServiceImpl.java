@@ -1,61 +1,85 @@
 package ru.skypro.homework.service.impl;
 
-import lombok.AllArgsConstructor;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skypro.homework.dto.NewPassword;
 import ru.skypro.homework.dto.Register;
+import ru.skypro.homework.dto.UpdateUser;
 import ru.skypro.homework.dto.User;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.mappers.UserMapper;
 import ru.skypro.homework.repository.ImageEntityRepository;
 import ru.skypro.homework.repository.UserRepository;
-import ru.skypro.homework.service.UserService;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Optional;
 
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
-@AllArgsConstructor
-public class UserServiceImpl  {
+@RequiredArgsConstructor
+@Transactional
+public class UserServiceImpl {
+    @Value("${path.to.image.folder}")
+    private String avatarsDir;
     private final UserRepository repository;
     private final ImageEntityRepository imageEntityRepository;
 
-    public boolean changePassword(NewPassword changePassword) {
-        return true;
-    }
 
-    public UserEntity findById(Long id){
+    public UserEntity findById(Long id) {
         return repository.findById(id).orElseThrow();
     }
-    public User getUserDto() {
-        return null;
+
+
+    /**
+     * метод находит в БД пользователя по его логину
+     *
+     * @param login
+     * @return метод возвращает Optional UserEntity
+     */
+    public Optional<UserEntity> findByLogin(String login) {
+        return repository.findByLogin(login);
     }
-    public UserEntity findByLogin(String login){
-        return repository.findUserEntityByLogin(login);
-    }
-    public boolean adUser(Register register){
+
+    public boolean adUser(Register register) {
         UserEntity userEntity = UserMapper.INSTANCE.registerToUserEntity(register);
-        if((repository.save(userEntity).getLogin()).equals(register.getUsername())) {
+        if ((repository.save(userEntity).getLogin()).equals(register.getUsername())) {
             return true;
-        }
-        else return false;
+        } else return false;
 
     }
 
-    public boolean validationPassword(NewPassword newPassword){
-        int n=newPassword.getNewPassword().length();
-        int m=newPassword.getCurrentPassword().length();
-        if ((n<8||n>16)||(m<8||m>16)){return false;}
-        else {return true;}
+    /**
+     * метод возвращает из БД дто пользователя
+     *
+     * @param authentication
+     * @return
+     */
+    public User getUser(Authentication authentication) {
+        if (findByLogin(authentication.getName()).isEmpty()) return null;
+        else return UserMapper.INSTANCE
+                .userEntityToUser(findByLogin(authentication.getName()).get());
     }
+
+    /**
+     * метод загружает аватар пользователя
+     *
+     * @param login
+     * @param image
+     * @throws IOException
+     */
+
     public void uploadImageForUser(String login, MultipartFile image) throws IOException {
-        UserEntity user = findByLogin(login);
-        Path filePath = Path.of("/image", user + "." + getExtensions(image.getOriginalFilename()));
+        UserEntity user = findByLogin(login).get();
+        Path filePath = Path.of(avatarsDir, user.getLogin() + "." + getExtensions(image.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
         Files.deleteIfExists(filePath);
         try (
@@ -66,7 +90,8 @@ public class UserServiceImpl  {
         ) {
             bis.transferTo(bos);
         }
-        ImageEntity imageEntity = imageEntityRepository.findById(user.getImageEntity().getId()).orElse(new ImageEntity());
+        ImageEntity imageEntity = Optional.ofNullable(user.getImageEntity())
+                .orElse(new ImageEntity());
         imageEntity.setFilePath(filePath.toString());
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
@@ -74,8 +99,27 @@ public class UserServiceImpl  {
         imageEntityRepository.save(imageEntity);
         user.setImageEntity(imageEntity);
     }
+
     private String getExtensions(String fileName) {
+
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
+
+    /**
+     * метод меняет данные пользователя
+     *
+     * @param updateUser
+     * @param authentication
+     * @return
+     */
+    public boolean changeUser(UpdateUser updateUser, Authentication authentication) {
+        UserEntity userEntity = repository.findByLogin(authentication.getName()).get();
+        userEntity.setPhone(updateUser.getPhone());
+        userEntity.setFirstName(updateUser.getFirstName());
+        userEntity.setLastName(updateUser.getLastName());
+        repository.save(userEntity);
+        return true;
+    }
+
 }
 

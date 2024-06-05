@@ -3,7 +3,6 @@ package ru.skypro.homework.controller;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +16,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import ru.skypro.homework.service.impl.AuthServiceImpl;
 import ru.skypro.homework.service.impl.UserServiceImpl;
+
 import java.io.IOException;
 
 @Slf4j
@@ -27,6 +28,7 @@ import java.io.IOException;
 @RequestMapping("/users")
 public class UserController {
     private final UserServiceImpl userService;
+    private final AuthServiceImpl authService;
 
     @Operation(
             summary = "Обновление пароля",
@@ -53,14 +55,12 @@ public class UserController {
 
 
     @PostMapping("/set_password")
-    public void setPassword(@RequestBody NewPassword changePassword) {
-        if (!userService.validationPassword(changePassword)) {
-            ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        } else if (userService.changePassword(changePassword)) {
-            ResponseEntity.ok().build();
-        } else {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity setPassword(@RequestBody NewPassword newPassword, Authentication authentication) {
+
+        if ((authService.changePassword(authentication.getName(), newPassword)))
+            return ResponseEntity.ok().build();
+        else
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
     @Operation(
@@ -93,11 +93,7 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<?> getUser(Authentication authentication) {
 
-        if (1 == 1) {
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+        return ResponseEntity.ok(userService.getUser(authentication));
 
     }
 
@@ -127,12 +123,11 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping("/me")
-    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser) {
-        if (updateUser.getFirstName().isBlank()) {
-            return ResponseEntity.ok(UpdateUser.builder().build());
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity<?> updateUser(@RequestBody UpdateUser updateUser
+            , Authentication authentication) {
+        if (userService.changeUser(updateUser, authentication)) {
+            return ResponseEntity.ok(updateUser);
+        } else return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 
     }
 
@@ -149,24 +144,13 @@ public class UserController {
             tags = "Пользователи"
     )
     @PatchMapping(value = "/me/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void updateUserImage(@RequestParam MultipartFile image) throws IOException {
-        //  String url = String.valueOf(image.getResource());
-        if (1 == 1) {
-            ResponseEntity.ok().build();
-        } else {
-            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
+    public ResponseEntity updateUserImage(@RequestParam MultipartFile image,
+                                          Authentication authentication) throws IOException {
+        userService.uploadImageForUser(authentication.getName(), image);
+        return ResponseEntity.ok().build();
 
     }
 
-    /*@GetMapping("/image/download/{id}")
-    public ResponseEntity< byte[] > getImage (@PathVariable Long id){
-        Avatar avatar = avatarService.findAvatarByStudentId(id);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(avatar.getMediaType()));
-        headers.setContentLength(avatar.getData().length);
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(avatar.getData());
-    }*/
 }
 
 
