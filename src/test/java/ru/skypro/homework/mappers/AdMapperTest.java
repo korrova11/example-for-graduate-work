@@ -53,14 +53,14 @@ class AdMapperTest {
                         .phone("+7384)18239-64")
                         .login("Логин")
                         .build())
-                .price(100000L)
+                .price(1000)
                 .description("Описание")
                 .title("Заголовок")
                 .build();
 
         ExtendedAd extendedAd = AdMapper.INSTANCE.adEntityToExtendedAd(adEntity);
         assertThat(extendedAd.getPk()).isEqualTo(1);
-        assertThat(extendedAd.getPrice()).isEqualTo(100000L);
+        assertThat(extendedAd.getPrice()).isEqualTo(1000);
         assertThat(extendedAd.getTitle()).isEqualTo("Заголовок");
         assertThat(extendedAd.getAuthorFirstName()).isEqualTo("Имя");
         assertThat(extendedAd.getAuthorLastName()).isEqualTo("Фамилия");

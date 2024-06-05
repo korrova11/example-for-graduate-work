@@ -33,17 +33,11 @@ public class UserServiceImpl {
     private final UserRepository repository;
     private final ImageEntityRepository imageEntityRepository;
 
-    public boolean changePassword(NewPassword changePassword) {
-        return true;
-    }
 
     public UserEntity findById(Long id) {
         return repository.findById(id).orElseThrow();
     }
 
-    public User getUserDto() {
-        return null;
-    }
 
     /**
      * метод находит в БД пользователя по его логину
