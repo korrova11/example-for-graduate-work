@@ -30,8 +30,8 @@ public class CommentEntity {
     @JoinColumn(name = "userEntity_id")
     private UserEntity userEntity;
 
-    @ManyToOne
-    @JoinColumn(name = "ads_id",nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ads_id")
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AdEntity ads;
 

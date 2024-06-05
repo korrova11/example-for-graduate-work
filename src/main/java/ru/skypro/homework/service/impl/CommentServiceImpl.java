@@ -48,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
      * @param authentication
      * @return
      */
-    public Comment createOrUpdate(Integer id, CreateOrUpdateComment updateComment,
+    public Optional<Comment> createOrUpdate(Integer id, CreateOrUpdateComment updateComment,
                                   Authentication authentication) {
         Optional<AdEntity> adEntity = adService.findById(id.longValue());
         if (adEntity.isEmpty()) {
@@ -59,9 +59,9 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setCreatedAt(new Date());
         commentEntity.setUserEntity(userService.findByLogin(authentication.getName()).get());
         commentEntity.setAds(adEntity.get());
-        commentRepository.save(commentEntity);
-        return CommentMapper.INSTANCE
-                .commentEntityToComment(commentRepository.save(commentEntity));
+
+        return Optional.of(CommentMapper.INSTANCE
+                .commentEntityToComment(commentRepository.save(commentEntity)));
 
     }
 
@@ -110,13 +110,13 @@ public class CommentServiceImpl implements CommentService {
      * @param text
      * @return
      */
-    public Comment changeComment(Integer id, CreateOrUpdateComment text) {
+    public Optional<Comment> changeComment(Integer id, CreateOrUpdateComment text) {
         Optional<CommentEntity> comment = findById(id);
-        if (comment.isEmpty()) return null;
+        if (comment.isEmpty()) return Optional.empty();
         comment.get().setText(text.getText());
 
-        return CommentMapper.INSTANCE
-                .commentEntityToComment(commentRepository.save(comment.get()));
+        return Optional.of(CommentMapper.INSTANCE
+                .commentEntityToComment(commentRepository.save(comment.get())));
 
     }
 

@@ -97,10 +97,11 @@ public class CommentController {
     public ResponseEntity<Comment> addComment(@PathVariable Integer id,
                                               @Valid @RequestBody CreateOrUpdateComment comment,
                                               Authentication authentication) {
-        if (commentService.createOrUpdate(id,comment,authentication)==null) {
+        Optional<Comment> comment1 = commentService.createOrUpdate(id,comment,authentication);
+        if (comment1.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-        return ResponseEntity.ok(commentService.createOrUpdate(id,comment,authentication));
+        return ResponseEntity.ok(comment1.get());
     }
 
     @Operation(summary = "Удаление комментария",
@@ -164,8 +165,9 @@ public class CommentController {
 
         if (!commentService.isMainOrAdmin(commentId,authentication))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        if ((commentService.changeComment(commentId,createOrUpdateComment))==null)
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        return ResponseEntity.ok(commentService.changeComment(commentId,createOrUpdateComment));
+        Optional<Comment> comment = commentService.changeComment(commentId,createOrUpdateComment);
+        if (comment.isEmpty())
+        {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();};
+        return ResponseEntity.ok(comment.get());
     }
 }
