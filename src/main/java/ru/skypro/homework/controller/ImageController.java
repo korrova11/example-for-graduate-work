@@ -1,6 +1,7 @@
 package ru.skypro.homework.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,19 +13,25 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skypro.homework.entity.ImageEntity;
 import ru.skypro.homework.repository.ImageEntityRepository;
 
+import java.util.Optional;
+
 @RestController
 @CrossOrigin(value = "http://localhost:3000")
 @RequiredArgsConstructor
-
+@Slf4j
 public class ImageController {
     private final ImageEntityRepository repository;
 
     @GetMapping("/image/download/{id}")
     public ResponseEntity< byte[] > getImage (@PathVariable Long id){
-        ImageEntity imageEntity = repository.findById(id).get();
+        Optional<ImageEntity> imageEntity = repository.findById(id);
+        if(imageEntity.isEmpty()) {
+            return
+                    ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        };
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(imageEntity.getMediaType()));
-        headers.setContentLength(imageEntity.getData().length);
-        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(imageEntity.getData());
+        headers.setContentType(MediaType.parseMediaType(imageEntity.get().getMediaType()));
+        headers.setContentLength(imageEntity.get().getData().length);
+        return ResponseEntity.status(HttpStatus.OK).headers(headers).body(imageEntity.get().getData());
     }
 }

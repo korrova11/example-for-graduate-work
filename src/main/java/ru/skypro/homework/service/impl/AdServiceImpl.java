@@ -152,8 +152,13 @@ public class AdServiceImpl implements AdService {
         if (adEntity.isEmpty()) {
             return false;
         } else {
+            AdEntity ad = adEntity.get();
             repository.getReferenceById(id.longValue()).getComments()
                     .forEach(commentRepository::delete);
+             if (Optional.ofNullable(ad.getImageEntity().getId()).isPresent()){
+                 imageEntityRepository.delete(ad.getImageEntity());
+             }
+
             repository.deleteById(id.longValue());
             return true;
         }
