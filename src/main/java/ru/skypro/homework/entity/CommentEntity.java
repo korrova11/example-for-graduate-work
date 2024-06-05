@@ -26,11 +26,11 @@ public class CommentEntity {
     @Column
     private String text;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "userEntity_id")
     private UserEntity userEntity;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "ads_id",nullable = true)
     @OnDelete(action = OnDeleteAction.CASCADE)
     private AdEntity ads;
