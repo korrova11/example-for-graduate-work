@@ -4,6 +4,7 @@ import lombok.*;
 import ru.skypro.homework.dto.Role;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -26,5 +27,6 @@ public class UserEntity {
     @JoinColumn(referencedColumnName = "id", name = "image_id")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private ImageEntity imageEntity;
+
 
 }
