@@ -15,7 +15,7 @@ public class ImageEntity {
     @Id
     @GeneratedValue
     private Long id;
-    private String name;
+    private String name = "/image/download/" + id;
     private String filePath;
     private long fileSize;
     private String mediaType;
