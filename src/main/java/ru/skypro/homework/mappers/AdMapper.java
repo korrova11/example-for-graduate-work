@@ -19,8 +19,8 @@ public interface AdMapper {
     @Mappings({
             @Mapping(target = "author", source = "adEntity.user.id"),
             @Mapping(target = "pk", source = "id"),
-            @Mapping(target = "image", expression =
-                    "java(adEntity.getImageEntity()==null?\"\":\"/image/download/\"+adEntity.getImageEntity().getId())")
+            @Mapping(target = "image", source = "imageEntity.name")
+
     })
     Ad adEntityToAd(AdEntity adEntity);
 
@@ -42,9 +42,7 @@ public interface AdMapper {
             @Mapping(target = "phone", source = "user.phone"),
             @Mapping(target = "price", source = "price"),
             @Mapping(target = "title", source = "title"),
-            @Mapping(target = "image", expression =
-                    "java(adEntity.getImageEntity()==null?\"\":\"/image/download/\"+adEntity.getImageEntity().getId())")
-    })
+            @Mapping(target = "image", source = "imageEntity.name")    })
     ExtendedAd adEntityToExtendedAd(AdEntity adEntity);
 
 

@@ -27,35 +27,14 @@ public class ImageServiceImpl {
 
 
 
-    public byte[] getImage(Integer id) {
-        Optional<ImageEntity> imageEntityOptional = repository.findById(id.longValue());
-        if (imageEntityOptional.isEmpty()) {
-            return null;
-        }
-        ImageEntity imageEntity = imageEntityOptional.get();
-        byte[] res = getImage(imageEntity.getName(), photoDir);
-        return res;
-    }
+
 
     private String getExtensions(String fileName) {
         return fileName.substring(fileName.lastIndexOf(".") + 1);
     }
 
-        public  ImageEntity loadImage(MultipartFile file, String pathDir) throws IOException {
-            String fileName = UUID.randomUUID() + "." + getExtensions(file.getOriginalFilename());
-            ImageEntity imageEntity = new ImageEntity();
-            imageEntity.setName(fileName);
-            Path filePath = Path.of(pathDir, fileName);
-            Files.createDirectories(filePath.getParent());
-            Files.deleteIfExists(filePath);
-            try (InputStream is = file.getInputStream();
-                 OutputStream os = Files.newOutputStream(filePath, CREATE_NEW);
-                 BufferedInputStream bis = new BufferedInputStream(is, 1024);
-                 BufferedOutputStream bos = new BufferedOutputStream(os, 1024)){
-                bis.transferTo(bos);
-            }
-            return imageEntity;
-        }
+
+
 
 
         public  void deleteFile(String url) throws IOException {

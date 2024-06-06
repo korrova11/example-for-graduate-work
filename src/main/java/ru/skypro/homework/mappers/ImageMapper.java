@@ -10,8 +10,8 @@ import ru.skypro.homework.entity.ImageEntity;
 @Mapper(componentModel = "spring")
 @Component
 public interface ImageMapper {
-    ImageMapper INSTANCEIM = Mappers.getMapper(ImageMapper.class);
+    /*ImageMapper INSTANCEIM = Mappers.getMapper(ImageMapper.class);
 
     Image imageEntityToImage(ImageEntity imageEntity);
-    ImageEntity imageToImageEntity(Image image);
+    ImageEntity imageToImageEntity(Image image);*/
 }

@@ -2,6 +2,7 @@ package ru.skypro.homework.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.Optional;
 @Service
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class MyUserDetailsService implements UserDetailsService {
 
     private UserServiceImpl service;
