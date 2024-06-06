@@ -109,7 +109,8 @@ public class AdServiceImpl implements AdService {
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
         imageEntity.setData(image.getBytes());
-        imageEntityRepository.save(imageEntity);
+        Long id1 = imageEntityRepository.save(imageEntity).getId();
+        imageEntity.setName("/image/download/" + id1);
         ad.setImageEntity(imageEntity);
     }
 
@@ -155,9 +156,9 @@ public class AdServiceImpl implements AdService {
             AdEntity ad = adEntity.get();
             repository.getReferenceById(id.longValue()).getComments()
                     .forEach(commentRepository::delete);
-             if (Optional.ofNullable(ad.getImageEntity().getId()).isPresent()){
-                 imageEntityRepository.delete(ad.getImageEntity());
-             }
+            if (Optional.ofNullable(ad.getImageEntity().getId()).isPresent()) {
+                imageEntityRepository.delete(ad.getImageEntity());
+            }
 
             repository.deleteById(id.longValue());
             return true;
