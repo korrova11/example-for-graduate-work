@@ -48,7 +48,7 @@ public class AdServiceImpl implements AdService {
             , Authentication authentication) throws IOException {
 
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
-        adEntity.setId(1L);
+        //adEntity.setId(1L);
         adEntity.setUser(userService.findByLogin(authentication.getName()).get());
         AdEntity adEntity1 = repository.save(adEntity);
         uploadImageForAd(adEntity1.getId(), image);

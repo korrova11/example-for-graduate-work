@@ -1,5 +1,7 @@
 package ru.skypro.homework.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.minidev.json.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.shadow.com.univocity.parsers.annotations.Nested;
@@ -61,15 +63,16 @@ public class UserControllerTest {
     Long id = 34L;
     String firstName = "ИМЯ";
     String lastName = "ФАМИЛИЯ";
+    String phone = "+7(6978548616";
     UserEntity userEntity = UserEntity.builder()
             .firstName(firstName)
             .lastName(lastName)
             .id(id)
             .login(login)
-          //  .password(encoder.encode("12345678"))
+            .password(encoder.encode("12345678"))
             .build();
     NewPassword newPassword = NewPassword.builder()
-           // .currentPassword(encoder.encode("12345678"))
+            .currentPassword("12345678")
             .newPassword("87654321")
             .build();
     UpdateUser updateUser = UpdateUser.builder()
@@ -103,35 +106,48 @@ public class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    /*@Test
+    @Test
     @WithMockUser(value = "spring")
     public void setPasswordTest() throws Exception {
         NewPassword newPassword = NewPassword.builder()
-                .currentPassword(encoder.encode("12345678"))
+                .currentPassword("12345678")
                 .newPassword("87654321")
                 .build();
+
+        JSONObject updateUserObject = new JSONObject();
+        updateUserObject.
         when(userRepository.findByLogin(any(String.class)))
                 .thenReturn(Optional.of(userEntity));
 
         mockMvc.perform(MockMvcRequestBuilders
-                .post("/users/set_password",newPassword)
+                        .post("/users/set_password", newPassword)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-    }*/
+    }
+
     @Test
     @WithMockUser(value = "spring")
     public void changeUserTest() throws Exception {
+        JSONObject updateUserObject = new JSONObject();
+        updateUserObject.put("phone", phone);
+        updateUserObject.put("lastName", "НоваяФамилия");
+        updateUserObject.put("firstName", "НовоеИмя");
         when(userRepository.findByLogin(any(String.class)))
                 .thenReturn(Optional.of(userEntity));
         when(userRepository.save(userEntity)).thenReturn(userEntity);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/users/me", updateUser)
+                        .content(updateUserObject.toString())
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.phone").value(phone))
+                .andExpect(jsonPath("$.lastName").value("НоваяФамилия"))
+                .andExpect(jsonPath("$.firstName").value("НовоеИмя"));
+        ;
 
     }
 }
