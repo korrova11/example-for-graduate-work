@@ -8,6 +8,7 @@ import lombok.Data;
 public class Image {
 
     private Long id;
+    private String name;
     private String filePath;
     private long fileSize;
     private String mediaType;
