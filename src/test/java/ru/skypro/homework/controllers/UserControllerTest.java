@@ -106,29 +106,6 @@ public class UserControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-   /* @Test
-    @WithMockUser(value = "spring")
-    public void setPasswordTest() throws Exception {
-        NewPassword newPassword = NewPassword.builder()
-                .currentPassword("12345678")
-                .newPassword("87654321")
-                .build();
-
-        JSONObject updateUserObject = new JSONObject();
-        updateUserObject.put("currentPassword","12345678");
-        updateUserObject.put("newPassword","87654321");
-        when(userRepository.findByLogin(any(String.class)))
-                .thenReturn(Optional.of(userEntity));
-
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/users/set_password", newPassword)
-                        .content(updateUserObject.toString())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-
-    }
-*/
     @Test
     @WithMockUser(value = "spring")
     public void changeUserTest() throws Exception {
