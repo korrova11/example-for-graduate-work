@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.skypro.homework.config.MyUserDetailsService;
 import ru.skypro.homework.config.WebSecurityConfig;
 import ru.skypro.homework.controller.AdController;
+import ru.skypro.homework.dto.Role;
 import ru.skypro.homework.entity.AdEntity;
 import ru.skypro.homework.entity.UserEntity;
 import ru.skypro.homework.repository.AdRepository;
@@ -31,8 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,20 +60,29 @@ public class AdControllerTest {
     private MyUserDetailsService myUserDetailsService;
     @InjectMocks
     private AdController adController;
+    UserEntity userEntity = UserEntity.builder()
+            .role(Role.ADMIN)
+            .login("ИМЯ")
+            .build();
+    UserEntity userEntity1 = UserEntity.builder()
+            .role(Role.USER)
+            .login("ИМЯ")
+            .build();
     AdEntity adEntity1 = AdEntity.builder()
+            .user(userEntity)
+            .id(1L)
             .description("Описание1")
             .title("Заголовок1")
             .price(77)
             .build();
     AdEntity adEntity2 = AdEntity.builder()
+            .id(2L)
+            .user(userEntity1)
             .description("Описание2")
             .title("Заголовок2")
             .build();
     List<AdEntity> list = new ArrayList<>(List.of(adEntity1, adEntity2));
-    UserEntity userEntity = UserEntity.builder()
-            .login("ИМЯ")
-            .build();
-    Authentication authentication = new TestAuthor("ИМЯ");
+
 
     @Test
     @WithMockUser(value = "spring")
@@ -110,18 +119,17 @@ public class AdControllerTest {
                 .andExpect(status().isNotFound());
 
     }
-   /* @Test
-    //@WithMockUser(value = "spring")
+    @Test
+    @WithMockUser(value = "spring")
     public void updateAdsTest() throws Exception {
         JSONObject updateUserObject = new JSONObject();
         updateUserObject.put("title", "НовыйЗаголовок");
         updateUserObject.put("description", "НовоеОписание");
         updateUserObject.put("price", 45);
+
         when(adRepository.findById(any(Long.class))).thenReturn(Optional.of(adEntity1));
         when(usRepository.findByLogin(any(String.class))).thenReturn(Optional.of(userEntity));
-        when(adService.isMainOrAdmin(any(Integer.class),eq(authentication)));
-        when(usService.findByLogin(eq(authentication.getName())))
-                .thenReturn(Optional.of(userEntity));
+
         mockMvc.perform(MockMvcRequestBuilders
                         .patch("/ads/1")
                         .content(updateUserObject.toString())//send
@@ -129,7 +137,42 @@ public class AdControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title").value("НовыйЗаголовок"))
-                .andExpect(jsonPath("$.price").value(45))
-                .andExpect(jsonPath("$.description").value("НовоеОписание"));
-    }*/
+                .andExpect(jsonPath("$.price").value(45));
+    }
+    @Test
+    @WithMockUser(value = "spring")
+    public void updateAdsWhenForbiddenTest() throws Exception {
+        JSONObject updateUserObject = new JSONObject();
+        updateUserObject.put("title", "НовыйЗаголовок");
+        updateUserObject.put("description", "НовоеОписание");
+        updateUserObject.put("price", 45);
+
+        when(adRepository.findById(any(Long.class))).thenReturn(Optional.of(adEntity2));
+        when(usRepository.findByLogin(any(String.class))).thenReturn(Optional.of(userEntity1));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/ads/1")
+                        .content(updateUserObject.toString())//send
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+    @Test
+    @WithMockUser(value = "spring")
+    public void updateAdsWhenNotFoundTest() throws Exception {
+        JSONObject updateUserObject = new JSONObject();
+        updateUserObject.put("title", "НовыйЗаголовок");
+        updateUserObject.put("description", "НовоеОписание");
+        updateUserObject.put("price", 45);
+
+        when(adRepository.findById(any(Long.class))).thenReturn(Optional.empty());
+        when(usRepository.findByLogin(any(String.class))).thenReturn(Optional.of(userEntity));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .patch("/ads/1")
+                        .content(updateUserObject.toString())//send
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }

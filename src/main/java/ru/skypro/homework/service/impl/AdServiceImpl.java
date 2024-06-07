@@ -212,6 +212,7 @@ public class AdServiceImpl implements AdService {
      * @param authentication
      */
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
+        if (repository.findById(id.longValue()).isEmpty()) return true;
         boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
         return (authentication.getName()).equals(findById(id.longValue()).get().getUser().getLogin()) || admin;
 

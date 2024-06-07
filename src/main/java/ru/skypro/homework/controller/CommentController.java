@@ -51,7 +51,7 @@ public class CommentController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<Comments> getComments(@PathVariable Integer id) {
        Optional<Comments> comments = commentService.getAllByAd(id.longValue());
-       if (comments.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+       if (comments.get().getCount() ==0) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
        else
         return ResponseEntity.ok(comments.get());
     }
