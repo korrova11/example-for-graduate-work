@@ -22,4 +22,5 @@ public class ImageEntity {
     @Lob
     private byte[] data;
 
+
 }

@@ -28,6 +28,7 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * метод возвращает все комментарии по Id объявления
+     *
      * @param id
      * @return
      */
@@ -43,16 +44,17 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * метод создает новый комментарий и записывает его в БД
+     *
      * @param id
      * @param updateComment
      * @param authentication
      * @return
      */
     public Optional<Comment> createOrUpdate(Integer id, CreateOrUpdateComment updateComment,
-                                  Authentication authentication) {
+                                            Authentication authentication) {
         Optional<AdEntity> adEntity = adService.findById(id.longValue());
         if (adEntity.isEmpty()) {
-            return null;
+            return Optional.empty();
         }
         CommentEntity commentEntity = CommentMapper.INSTANCE
                 .createOrUpdateCommentToCommentEntity(updateComment);
@@ -60,13 +62,16 @@ public class CommentServiceImpl implements CommentService {
         commentEntity.setUserEntity(userService.findByLogin(authentication.getName()).get());
         commentEntity.setAds(adEntity.get());
 
-        return Optional.of(CommentMapper.INSTANCE
-                .commentEntityToComment(commentRepository.save(commentEntity)));
+        CommentEntity commentEntity1 = commentRepository.save(commentEntity);
+        Comment comment = CommentMapper.INSTANCE
+                .commentEntityToComment(commentEntity1);
+        return Optional.of(comment);
 
     }
 
     /**
      * удаление комментария
+     *
      * @param idAd
      * @param idComment
      * @param authentication
@@ -82,6 +87,7 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * метод находит Optional комментария по id
+     *
      * @param id
      * @return
      */
@@ -92,12 +98,14 @@ public class CommentServiceImpl implements CommentService {
     /**
      * метод проверяет является ли пользователь
      * владельцем комментария или его роль ADMIN
+     *
      * @param id
      * @param authentication
      * @return
      */
 
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
+        if (commentRepository.findById(id).isEmpty()) return true;
         boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
         String login = findById(id).get().getUserEntity().getLogin();
         String loginUser = authentication.getName();
@@ -106,6 +114,7 @@ public class CommentServiceImpl implements CommentService {
 
     /**
      * метод изменяет комментарий
+     *
      * @param id
      * @param text
      * @return

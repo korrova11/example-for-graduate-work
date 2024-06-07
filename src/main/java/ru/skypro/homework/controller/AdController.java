@@ -170,10 +170,12 @@ public class AdController {
     public ResponseEntity<Ad> updateAds(@PathVariable Integer id,
                                         @RequestBody CreateOrUpdateAd createOrUpdateAd,
                                         Authentication authentication) {
-        if (adService.isMainOrAdmin(id, authentication)) {
-            Optional<Ad> ad = adService.changeAd(id, createOrUpdateAd, authentication);
-            return ad.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-        } else return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        if (!adService.isMainOrAdmin(id, authentication))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+
+        Optional<Ad> ad = adService.changeAd(id, createOrUpdateAd, authentication);
+        if (ad.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        else return ResponseEntity.ok(ad.get());
 
 
     }

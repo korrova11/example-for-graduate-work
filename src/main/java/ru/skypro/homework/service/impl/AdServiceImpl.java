@@ -48,7 +48,6 @@ public class AdServiceImpl implements AdService {
             , Authentication authentication) throws IOException {
 
         AdEntity adEntity = AdMapper.INSTANCE.createOrUpdateToAdEntity(properties);
-        adEntity.setId(1L);
         adEntity.setUser(userService.findByLogin(authentication.getName()).get());
         AdEntity adEntity1 = repository.save(adEntity);
         uploadImageForAd(adEntity1.getId(), image);
@@ -109,7 +108,8 @@ public class AdServiceImpl implements AdService {
         imageEntity.setFileSize(image.getSize());
         imageEntity.setMediaType(image.getContentType());
         imageEntity.setData(image.getBytes());
-        imageEntityRepository.save(imageEntity);
+        Long id1 = imageEntityRepository.save(imageEntity).getId();
+        imageEntity.setName("/image/download/" + id1);
         ad.setImageEntity(imageEntity);
     }
 
@@ -155,9 +155,9 @@ public class AdServiceImpl implements AdService {
             AdEntity ad = adEntity.get();
             repository.getReferenceById(id.longValue()).getComments()
                     .forEach(commentRepository::delete);
-             if (Optional.ofNullable(ad.getImageEntity().getId()).isPresent()){
-                 imageEntityRepository.delete(ad.getImageEntity());
-             }
+            if (Optional.ofNullable(ad.getImageEntity().getId()).isPresent()) {
+                imageEntityRepository.delete(ad.getImageEntity());
+            }
 
             repository.deleteById(id.longValue());
             return true;
@@ -212,6 +212,7 @@ public class AdServiceImpl implements AdService {
      * @param authentication
      */
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
+        if (repository.findById(id.longValue()).isEmpty()) return true;
         boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
         return (authentication.getName()).equals(findById(id.longValue()).get().getUser().getLogin()) || admin;
 

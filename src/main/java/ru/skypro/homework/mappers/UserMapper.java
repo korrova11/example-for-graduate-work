@@ -17,6 +17,7 @@ public interface UserMapper {
 
     @Mappings({
             @Mapping(target = "email", source = "login"),
+
             @Mapping(target = "image", expression =
                     "java(userEntity.getImageEntity()==null?\"\":\"/image/download/\"+userEntity.getImageEntity().getId())")
     })
