@@ -109,7 +109,7 @@ public class AdServiceImpl implements AdService {
         imageEntity.setMediaType(image.getContentType());
         imageEntity.setData(image.getBytes());
         Long id1 = imageEntityRepository.save(imageEntity).getId();
-        imageEntity.setName("/image/download/" + id1);
+
         ad.setImageEntity(imageEntity);
     }
 
