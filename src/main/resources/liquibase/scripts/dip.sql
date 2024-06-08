@@ -1,43 +1,43 @@
 -- liquibase formatted sql
 
--- changeset popova:create_bd
+-- changeset popova:create_image
 
-CREATE TABLE image_entity (
-	id SERIAL PRIMARY KEY NOT NULL,
-	data OID NULL,
+CREATE TABLE image_entity
+(
+	id BIGINT PRIMARY KEY NOT NULL,
+	"data"     bytea NULL,
 	file_path VARCHAR NULL,
-	file_size BIG SERIAL NOT NULL,
-	media_type VARCHAR NULL,
-
+	file_size BIGINT NOT NULL,
+	media_type VARCHAR NULL
 );
+
+-- changeset popova:create_users
 CREATE TABLE users (
-	id SERIAL PRIMARY KEY NOT NULL,
+	id BIGINT PRIMARY KEY NOT NULL,
 	first_name VARCHAR NULL,
 	last_name VARCHAR NULL,
 	login VARCHAR NULL,
 	password VARCHAR NULL,
 	phone VARCHAR NULL,
-	role SMALL SERIAL,
-	image_id SERIAL NULL,
+	role varchar(255) NOT NULL,
+	image_id SERIAL,
 	CONSTRAINT login_unique UNIQUE (login),
 	CONSTRAINT role_check CHECK (((role)::text = ANY ((ARRAY['USER'::character varying, 'ADMIN'::character varying])::text[])))
 );
 CREATE TABLE ads (
-	id SERIAL PRIMARY KEY NOT NULL,
+	id BIGINT PRIMARY KEY NOT NULL,
 	descriptions VARCHAR NULL,
-	price SERIAL NULL,
+	price SERIAL ,
 	title VARCHAR NULL,
-	image_id SERIAL NULL,
-	user_id SERIAL NULL,
-
+	image_id SERIAL,
+	user_id SERIAL NOT NULL
 );
 CREATE TABLE comment (
-	id SERIAL PRIMARY KEY NOT NULL,
+	id BIGINT PRIMARY KEY NOT NULL,
 	created_at TIMESTAMP NULL,
-	text VARCHAR NULL,
-	ads_id SERIAL NULL,
-	user_entity_id SERIAL NULL,
-
+	text VARCHAR ,
+	ads_id SERIAL NOT NULL,
+	user_entity_id SERIAL NOT NULL
 );
 ALTER TABLE users ADD CONSTRAINT fk_users_image FOREIGN KEY (image_id) REFERENCES image_entity(id);
 ALTER TABLE ads ADD CONSTRAINT fk_ads_image FOREIGN KEY (image_id) REFERENCES image_entity(id);
