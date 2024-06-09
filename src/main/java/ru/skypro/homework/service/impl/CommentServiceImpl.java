@@ -105,9 +105,10 @@ public class CommentServiceImpl implements CommentService {
      */
 
     public boolean isMainOrAdmin(Integer id, Authentication authentication) {
-        if (commentRepository.findById(id).isEmpty()) return true;
+        Optional<CommentEntity> commentEntity = findById(id);
+        if (commentEntity.isEmpty()) return true;
         boolean admin = (userService.findByLogin(authentication.getName()).get().getRole()) == Role.ADMIN;
-        String login = findById(id).get().getUserEntity().getLogin();
+        String login = commentEntity.get().getUserEntity().getLogin();
         String loginUser = authentication.getName();
         return ((loginUser).equals(login)) || admin;
     }
